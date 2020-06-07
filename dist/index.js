@@ -76,53 +76,56 @@ function execHelp() {
 }
 function getBranchName(descArgs) {
     var _a;
-    var filteredArgs = descArgs.filter(function (arg) { return arg !== '-D'; });
-    var isDelete = filteredArgs.length !== descArgs.length;
-    if (isDelete) {
+    var filteredArgs = descArgs.filter(function (arg) { return arg !== '-D' && arg !== '-S'; });
+    var isDeleteOrShow = filteredArgs.length !== descArgs.length;
+    if (isDeleteOrShow) {
         return (_a = filteredArgs[0]) !== null && _a !== void 0 ? _a : getCurrentBranch_1["default"]();
     }
     else {
         return filteredArgs.length < 2 ? getCurrentBranch_1["default"]() : filteredArgs[0];
     }
 }
-function getDescriptionString(descArgs) {
-    return descArgs.length === 2 ? descArgs[1] : descArgs[0];
-}
 function execBranchDescription() {
     return __awaiter(this, void 0, void 0, function () {
-        var descArgs, branchName, branchDescription, code, _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var descArgs, branchName, branchDescription, code, descriptionString;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
                     descArgs = getExpandedArgs_1["default"]().slice(1);
                     commander_1.program
                         .usage('desc [branch] <description|options>')
                         .option('-D', 'Delete description for the current branch or optionally specified branch / shorthand branch')
-                        .description('Set or delete a branch description for the current branch or optionally specified branch / shorthand branch');
+                        .option('-S', 'Show description for the current branch or optionally specified branch / shorthand branch')
+                        .description('Set, show or delete a branch description for the current branch or optionally specified branch / shorthand branch');
                     if (!(descArgs.length === 0 || descArgs.length > 2)) return [3, 1];
                     commander_1.program.outputHelp();
                     process.exit(1);
-                    return [3, 6];
+                    return [3, 8];
                 case 1:
                     branchName = getBranchName(descArgs);
                     branchDescription = new BranchDescription_1["default"](branchName);
+                    code = void 0;
                     if (!descArgs.includes('-D')) return [3, 3];
                     return [4, branchDescription.remove()];
                 case 2:
-                    _a = _b.sent();
-                    return [3, 5];
-                case 3: return [4, branchDescription.set(getDescriptionString(descArgs))];
+                    code = _a.sent();
+                    return [3, 7];
+                case 3:
+                    if (!descArgs.includes('-S')) return [3, 5];
+                    return [4, branchDescription.show()];
                 case 4:
-                    _a = _b.sent();
-                    _b.label = 5;
+                    code = _a.sent();
+                    return [3, 7];
                 case 5:
-                    code = _a;
-                    if (!code) {
-                        listBranches_1["default"]();
-                    }
+                    descriptionString = descArgs.length === 2 ? descArgs[1] : descArgs[0];
+                    return [4, branchDescription.set(descriptionString)];
+                case 6:
+                    code = _a.sent();
+                    _a.label = 7;
+                case 7:
                     process.exit(code);
-                    _b.label = 6;
-                case 6: return [2];
+                    _a.label = 8;
+                case 8: return [2];
             }
         });
     });

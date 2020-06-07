@@ -30,17 +30,13 @@ function execHelp() {
 }
 
 function getBranchName(descArgs: Array<string>) {
-  const filteredArgs = descArgs.filter(arg => arg !== '-D');
-  const isDelete = filteredArgs.length !== descArgs.length;
-  if (isDelete) {
+  const filteredArgs = descArgs.filter(arg => arg !== '-D' && arg !== '-S');
+  const isDeleteOrShow = filteredArgs.length !== descArgs.length;
+  if (isDeleteOrShow) {
     return filteredArgs[0] ?? getCurrentBranch();
   } else {
     return filteredArgs.length < 2 ? getCurrentBranch() : filteredArgs[0];
   }
-}
-
-function getDescriptionString(descArgs: Array<string>) {
-  return descArgs.length === 2 ? descArgs[1] : descArgs[0];
 }
 
 async function execBranchDescription() {
@@ -48,7 +44,8 @@ async function execBranchDescription() {
   program
     .usage('desc [branch] <description|options>')
     .option('-D', 'Delete description for the current branch or optionally specified branch / shorthand branch')
-    .description('Set or delete a branch description for the current branch or optionally specified branch / shorthand branch');
+    .option('-S', 'Show description for the current branch or optionally specified branch / shorthand branch')
+    .description('Set, show or delete a branch description for the current branch or optionally specified branch / shorthand branch');
 
   if (descArgs.length === 0 || descArgs.length > 2) {
     program.outputHelp();
@@ -56,11 +53,14 @@ async function execBranchDescription() {
   } else {
     const branchName = getBranchName(descArgs);
     const branchDescription = new BranchDescription(branchName);
-    const code = descArgs.includes('-D')
-      ? await branchDescription.remove()
-      : await branchDescription.set(getDescriptionString(descArgs));
-    if (!code) {
-      listBranches();
+    let code: number | undefined;
+    if (descArgs.includes('-D')) {
+      code = await branchDescription.remove();
+    } else if (descArgs.includes('-S')) {
+      code = await branchDescription.show();
+    } else {
+      const descriptionString = descArgs.length === 2 ? descArgs[1] : descArgs[0];
+      code = await branchDescription.set(descriptionString);
     }
     process.exit(code);
   }

@@ -46,12 +46,12 @@ Branch descriptions allow you to add notes to branches.
 ![](images/set-branch-description.png)
 
 ```sh
-git fury desc                    # Show description for current branch
 git fury desc 'My description'   # Set description for current branch
+git fury desc -S                 # Show description for current branch
 git fury desc -D                 # Delete description current branch
 
-git fury desc a                  # Show description for branch (a)
 git fury desc a 'My description' # Set description for branch (a)
+git fury desc a -S               # Show description for branch (a)
 git fury desc a -D               # Delete description for branch (a)
 ```
 

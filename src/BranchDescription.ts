@@ -1,22 +1,34 @@
 import getCurrentBranch from './helpers/getCurrentBranch';
 import { spawn } from 'child_process';
+import listBranches from './helpers/listBranches';
 
 export default class BranchDescription {
 
   private readonly branch: string;
+  private readonly configSetting: string;
 
   constructor(branch?: string) {
     this.branch = branch?.trim() || getCurrentBranch();
+    this.configSetting = `branch.${this.branch}.description`;
+  }
+
+  show(): Promise<number | undefined> {
+    return new Promise((resolve) => {
+      const child = spawn('git', ['config', this.configSetting], { stdio: 'inherit' });
+      child.on('exit', (code) => {
+        resolve(code);
+      });
+    });
   }
 
   set(description: string): Promise<number | undefined> {
     return new Promise((resolve) => {
-      const configSetting = `branch.${this.branch}.description`;
-      const child = spawn('git', ['config', '--global', configSetting, description], { stdio: 'inherit' });
+      const child = spawn('git', ['config', '--global', this.configSetting, description], { stdio: 'inherit' });
       child.on('exit', (code) => {
         if (code) {
           resolve();
         } else {
+          listBranches();
           resolve(code);
         }
       });
@@ -25,12 +37,12 @@ export default class BranchDescription {
 
   remove(): Promise<number | undefined> {
     return new Promise((resolve) => {
-      const configSetting = `branch.${this.branch}.description`;
-      const child = spawn('git', ['config', '--global', '--unset', configSetting], { stdio: 'inherit' });
+      const child = spawn('git', ['config', '--global', '--unset', this.configSetting], { stdio: 'inherit' });
       child.on('exit', (code) => {
         if (code) {
           resolve();
         } else {
+          listBranches();
           resolve(code);
         }
       });
