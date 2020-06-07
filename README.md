@@ -36,7 +36,7 @@ git config --global alias.rs 'fury reset'
 ##### Letters get expanded to branch names
 
 ![](images/basic-example.png)
- - `git co b` expands to `git checkout my-branch` (assuming aliases are set up)
+ - `git co b` expands to `git checkout some-branch` (assuming aliases are set up)
  - `git rb -i a` expends to `git rebase -i master` (assuming aliases are set up)
 
 ### Manage Branch Descriptions
