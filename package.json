@@ -20,7 +20,6 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
-    "commander": "^5.1.0",
-    "inquirer": "^7.1.0"
+    "commander": "^5.1.0"
   }
 }
