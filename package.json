@@ -1,6 +1,6 @@
 {
   "name": "git-fury",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Shorthand git syntax to sharpen your git fu and increase productivity.",
   "preferGlobal": true,
   "bin": "./bin/cli.js",

@@ -141,7 +141,6 @@ else if (args.length === 1 && (args[0] === 'br' || args[0] === 'branch')) {
     listBranches_1["default"]();
 }
 else {
-    console.log('got here!');
     var expandedArgs = getExpandedArgs_1["default"](args);
     var child = child_process_1.spawn('git', __spreadArrays(expandedArgs), { stdio: 'inherit' });
     child.on('exit', function (code) {
