@@ -71,7 +71,7 @@ if (args.includes('-h') || args.includes('--help')) {
   execHelp();
 } else if (args[0] === 'desc') {
   execBranchDescription();
-} else if (args.length === 1 && args[0] === 'br' || args[0] === 'branch') {
+} else if (args.length === 1 && (args[0] === 'br' || args[0] === 'branch')) {
   listBranches();
 } else {
   const expandedArgs = getExpandedArgs(args);
