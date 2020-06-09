@@ -23,7 +23,7 @@ export default class BranchDescription {
 
   set(description: string): Promise<number | undefined> {
     return new Promise((resolve) => {
-      const child = spawn('git', ['config', '--global', this.configSetting, description], { stdio: 'inherit' });
+      const child = spawn('git', ['config', this.configSetting, description], { stdio: 'inherit' });
       child.on('exit', (code) => {
         if (code) {
           resolve();
@@ -37,7 +37,7 @@ export default class BranchDescription {
 
   remove(): Promise<number | undefined> {
     return new Promise((resolve) => {
-      const child = spawn('git', ['config', '--global', '--unset', this.configSetting], { stdio: 'inherit' });
+      const child = spawn('git', ['config', '--unset', this.configSetting], { stdio: 'inherit' });
       child.on('exit', (code) => {
         if (code) {
           resolve();

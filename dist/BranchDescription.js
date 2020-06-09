@@ -23,7 +23,7 @@ var BranchDescription = (function () {
     BranchDescription.prototype.set = function (description) {
         var _this = this;
         return new Promise(function (resolve) {
-            var child = child_process_1.spawn('git', ['config', '--global', _this.configSetting, description], { stdio: 'inherit' });
+            var child = child_process_1.spawn('git', ['config', _this.configSetting, description], { stdio: 'inherit' });
             child.on('exit', function (code) {
                 if (code) {
                     resolve();
@@ -38,7 +38,7 @@ var BranchDescription = (function () {
     BranchDescription.prototype.remove = function () {
         var _this = this;
         return new Promise(function (resolve) {
-            var child = child_process_1.spawn('git', ['config', '--global', '--unset', _this.configSetting], { stdio: 'inherit' });
+            var child = child_process_1.spawn('git', ['config', '--unset', _this.configSetting], { stdio: 'inherit' });
             child.on('exit', function (code) {
                 if (code) {
                     resolve();
