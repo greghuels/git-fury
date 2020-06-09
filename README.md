@@ -27,17 +27,22 @@ git config --global alias.rs 'fury reset'
 
 ## Usage
 
-### Shorthand syntax
 
-##### Numbers get prepended with `HEAD~`
+### Shorthand Syntax
+
+#### Numbers get prepended with `HEAD~`
   - `git fury diff 2 1` expands to `git diff HEAD~2 HEAD~1`
   - `git df 2 1` also expands if the optional aliases are set up
 
-##### Letters get expanded to branch names
+#### Letters get expanded to branch names
 
 ![](images/basic-example.png)
  - `git co b` expands to `git checkout some-branch` (assuming aliases are set up)
  - `git rb -i a` expands to `git rebase -i master` (assuming aliases are set up)
+
+#### See it in action
+![](images/demo.gif)
+
 
 ### Manage Branch Descriptions
 
