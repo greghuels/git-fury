@@ -5,6 +5,7 @@ import listBranches from './helpers/listBranches';
 import { spawn } from 'child_process';
 import BranchDescription from './BranchDescription';
 import getCurrentBranch from './helpers/getCurrentBranch';
+import getVersion from './helpers/getVersion';
 
 function execHelp() {
   console.log('Usage: git fury [options]');
@@ -69,6 +70,9 @@ async function execBranchDescription() {
 const args = process.argv.slice(2);
 if (args.includes('-h') || args.includes('--help')) {
   execHelp();
+} else if (args[0] === '-v' || args[0] === '--version') {
+  console.log(`git-fury version ${getVersion()}`);
+  process.exit(0);
 } else if (args[0] === 'desc') {
   execBranchDescription();
 } else if (args.length === 1 && (args[0] === 'br' || args[0] === 'branch')) {
@@ -81,3 +85,4 @@ if (args.includes('-h') || args.includes('--help')) {
     process.exit(code);
   });
 }
+

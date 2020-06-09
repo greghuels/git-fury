@@ -52,6 +52,7 @@ var listBranches_1 = __importDefault(require("./helpers/listBranches"));
 var child_process_1 = require("child_process");
 var BranchDescription_1 = __importDefault(require("./BranchDescription"));
 var getCurrentBranch_1 = __importDefault(require("./helpers/getCurrentBranch"));
+var getVersion_1 = __importDefault(require("./helpers/getVersion"));
 function execHelp() {
     console.log('Usage: git fury [options]');
     console.log('');
@@ -133,6 +134,10 @@ function execBranchDescription() {
 var args = process.argv.slice(2);
 if (args.includes('-h') || args.includes('--help')) {
     execHelp();
+}
+else if (args[0] === '-v' || args[0] === '--version') {
+    console.log("git-fury version " + getVersion_1["default"]());
+    process.exit(0);
 }
 else if (args[0] === 'desc') {
     execBranchDescription();
