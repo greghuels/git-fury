@@ -5,6 +5,8 @@
   "preferGlobal": true,
   "bin": "./bin/cli.js",
   "scripts": {
+    "lint": "eslint src/{*,**/*}.ts",
+    "lint:fix": "npm run lint -- --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && npm link",
     "prepare": "tsc",

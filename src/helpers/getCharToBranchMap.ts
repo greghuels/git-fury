@@ -5,7 +5,7 @@ function getCharFromNum(num: number): string {
   if (num > 26) {
     const moreSignificantDigit = Math.floor(i / 26);
     const remainder = Math.floor(i % 26) + 1;
-    return `${getCharFromNum(moreSignificantDigit)}${getCharFromNum(remainder)}`
+    return `${getCharFromNum(moreSignificantDigit)}${getCharFromNum(remainder)}`;
   } else {
     return String.fromCharCode(97 + i);
   }
