@@ -1,51 +1,31 @@
+import executeGit from './helpers/executeGit';
 import getCurrentBranch from './helpers/getCurrentBranch';
-import { spawn } from 'child_process';
 import listBranches from './helpers/listBranches';
 
 export default class BranchDescription {
-
-  private readonly branch: string;
   private readonly configSetting: string;
 
-  constructor(branch?: string) {
-    this.branch = branch?.trim() || getCurrentBranch();
-    this.configSetting = `branch.${this.branch}.description`;
+  constructor(specifiedBranch?: string) {
+    const branch = specifiedBranch?.trim() || getCurrentBranch();
+    this.configSetting = `branch.${branch}.description`;
   }
 
-  show(): Promise<number | undefined> {
-    return new Promise((resolve) => {
-      const child = spawn('git', ['config', this.configSetting], { stdio: 'inherit' });
-      child.on('exit', (code) => {
-        resolve(code);
-      });
-    });
+  show = (): Promise<number> =>
+    executeGit(['config', this.configSetting])
+
+  set = async (description: string): Promise<number | undefined> => {
+    const code = await executeGit(['config', this.configSetting, description]);
+    if (!code) {
+      listBranches();
+    }
+    return code;
   }
 
-  set(description: string): Promise<number | undefined> {
-    return new Promise((resolve) => {
-      const child = spawn('git', ['config', this.configSetting, description], { stdio: 'inherit' });
-      child.on('exit', (code) => {
-        if (code) {
-          resolve();
-        } else {
-          listBranches();
-          resolve(code);
-        }
-      });
-    });
-  }
-
-  remove(): Promise<number | undefined> {
-    return new Promise((resolve) => {
-      const child = spawn('git', ['config', '--unset', this.configSetting], { stdio: 'inherit' });
-      child.on('exit', (code) => {
-        if (code) {
-          resolve();
-        } else {
-          listBranches();
-          resolve(code);
-        }
-      });
-    });
+  remove = async (): Promise<number> => {
+    const code = await executeGit(['config', '--unset', this.configSetting]);
+    if (!code) {
+      listBranches();
+    }
+    return code;
   }
 }

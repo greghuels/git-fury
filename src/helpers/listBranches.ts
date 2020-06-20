@@ -12,7 +12,7 @@ export default function listBranches(): void {
       const desc = getBranchDescription(branch);
       if (branch === currentBranch) {
         const colorizer = new Colorizer();
-        colorizer.normal('* ')
+        colorizer.normal('* ');
         colorizer.yellow(`(${ch})`);
         colorizer.green(` ${branch}`);
         colorizer.fadedNormal(` ${desc}`);
@@ -24,7 +24,7 @@ export default function listBranches(): void {
         colorizer.fadedNormal(` ${desc}`);
         colorizer.log();
       }
-    })
+    });
   } catch (e) {
     if (e && e.status) {
       process.exit(e.status);

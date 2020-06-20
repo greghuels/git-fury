@@ -2,10 +2,10 @@ import { program } from 'commander';
 
 import getExpandedArgs from './helpers/getExpandedArgs';
 import listBranches from './helpers/listBranches';
-import { spawn } from 'child_process';
 import BranchDescription from './BranchDescription';
 import getCurrentBranch from './helpers/getCurrentBranch';
 import getVersion from './helpers/getVersion';
+import executeGit from './helpers/executeGit';
 
 function execHelp() {
   console.log('Usage: git fury [options]');
@@ -67,22 +67,22 @@ async function execBranchDescription() {
   }
 }
 
-const args = process.argv.slice(2);
-if (args.includes('-h') || args.includes('--help')) {
-  execHelp();
-} else if (args[0] === '-v' || args[0] === '--version') {
-  console.log(`git-fury version ${getVersion()}`);
-  process.exit(0);
-} else if (args[0] === 'desc') {
-  execBranchDescription();
-} else if (args.length === 1 && (args[0] === 'br' || args[0] === 'branch')) {
-  listBranches();
-} else {
-  const expandedArgs = getExpandedArgs(args);
-  const child = spawn('git', [...expandedArgs], { stdio: 'inherit' });
-  child.on('exit', (code) => {
+async function main() {
+  const args = process.argv.slice(2);
+  if (args.includes('-h') || args.includes('--help')) {
+    execHelp();
+  } else if (args[0] === '-v' || args[0] === '--version') {
+    console.log(`git-fury version ${getVersion()}`);
+    process.exit(0);
+  } else if (args[0] === 'desc') {
+    execBranchDescription();
+  } else if (args.length === 1 && (args[0] === 'br' || args[0] === 'branch')) {
+    listBranches();
+  } else {
+    const code = await executeGit(args);
     listBranches();
     process.exit(code);
-  });
+  }
 }
 
+main();
