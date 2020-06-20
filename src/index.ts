@@ -5,7 +5,7 @@ import listBranches from './helpers/listBranches';
 import BranchDescription from './BranchDescription';
 import getCurrentBranch from './helpers/getCurrentBranch';
 import getVersion from './helpers/getVersion';
-import executeGit, { ExecuteGitOptions } from './helpers/executeGit';
+import executeGit, { ExecuteGitOptions, printDryRun } from './helpers/executeGit';
 
 function execHelp() {
   console.log('Usage: git fury [options]');
@@ -68,6 +68,26 @@ async function execBranchDescription(expandedArgs: Array<string>, options: Execu
   }
 }
 
+function execListBranches(expandedArgs: Array<string>, options: ExecuteGitOptions) {
+  if (options.dryRun) {
+    printDryRun(expandedArgs);
+  } else {
+    listBranches();
+  }
+}
+
+function shouldListBranches(args: Array<string>) {
+  if (args[0] === 'branch') {
+    if (args.length === 1) {
+      return true;
+    }
+    if (args.length === 2 && ['--list', '-l'].includes(args[1])) {
+      return true;
+    }
+  }
+  return false;
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const dryRunIndex = args.indexOf('--dry-run');
@@ -84,8 +104,8 @@ async function main() {
   } else if (args[0] === 'desc') {
     const expandedArgs = getExpandedArgs(args);
     execBranchDescription(expandedArgs, { dryRun });
-  } else if (args.length === 1 && (args[0] === 'br' || args[0] === 'branch')) {
-    listBranches();
+  } else if (shouldListBranches(args)) {
+    execListBranches(args, { dryRun });
   } else {
     const expandedArgs = getExpandedArgs(args);
     const code = await executeGit(expandedArgs, { dryRun });
