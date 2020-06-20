@@ -1,12 +1,9 @@
 {
   "name": "git-fury",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Shorthand git syntax to sharpen your git fu and increase productivity.",
   "preferGlobal": true,
   "bin": "./bin/cli.js",
-  "files": [
-    "dist/*"
-  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && npm link",

@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for shortened git syntax
 - Support for setting/deleting/showing branch descriptions
 
-## [1.1.0] - 2020-06-20
+## [1.1.0 - 1.1.1] - 2020-06-20
 ### Added
 - New --dry-run option allows users to see what git command would be executed without actually executing the command
 
