@@ -5,13 +5,14 @@ import listBranches from './helpers/listBranches';
 import BranchDescription from './BranchDescription';
 import getCurrentBranch from './helpers/getCurrentBranch';
 import getVersion from './helpers/getVersion';
-import executeGit from './helpers/executeGit';
+import executeGit, { ExecuteGitOptions } from './helpers/executeGit';
 
 function execHelp() {
   console.log('Usage: git fury [options]');
   console.log('');
   console.log('Options:');
   console.log('  -h, --help  display help for command');
+  console.log('  --dry-run  display expanded git command without executing it');
   console.log('  desc [branch] <description>, Set a branch description');
   console.log('  desc -D [branch], Delete a branch description');
   console.log('');
@@ -40,8 +41,8 @@ function getBranchName(descArgs: Array<string>) {
   }
 }
 
-async function execBranchDescription() {
-  const descArgs = getExpandedArgs().slice(1);
+async function execBranchDescription(expandedArgs: Array<string>, options: ExecuteGitOptions) {
+  const descArgs = expandedArgs.slice(1);
   program
     .usage('desc [branch] <description|options>')
     .option('-D', 'Delete description for the current branch or optionally specified branch / shorthand branch')
@@ -53,7 +54,7 @@ async function execBranchDescription() {
     process.exit(1);
   } else {
     const branchName = getBranchName(descArgs);
-    const branchDescription = new BranchDescription(branchName);
+    const branchDescription = new BranchDescription(branchName, options);
     let code: number | undefined;
     if (descArgs.includes('-D')) {
       code = await branchDescription.remove();
@@ -69,18 +70,28 @@ async function execBranchDescription() {
 
 async function main() {
   const args = process.argv.slice(2);
+  const dryRunIndex = args.indexOf('--dry-run');
+  const dryRun = dryRunIndex > -1;
+  if (dryRun) {
+    args.splice(dryRunIndex, 1);
+  }
+
   if (args.includes('-h') || args.includes('--help')) {
     execHelp();
   } else if (args[0] === '-v' || args[0] === '--version') {
     console.log(`git-fury version ${getVersion()}`);
     process.exit(0);
   } else if (args[0] === 'desc') {
-    execBranchDescription();
+    const expandedArgs = getExpandedArgs(args);
+    execBranchDescription(expandedArgs, { dryRun });
   } else if (args.length === 1 && (args[0] === 'br' || args[0] === 'branch')) {
     listBranches();
   } else {
-    const code = await executeGit(args);
-    listBranches();
+    const expandedArgs = getExpandedArgs(args);
+    const code = await executeGit(expandedArgs, { dryRun });
+    if (!dryRun) {
+      listBranches();
+    }
     process.exit(code);
   }
 }

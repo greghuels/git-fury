@@ -9,7 +9,7 @@ const getMemoizedCharToBranchMap = (): CharToBranchMap => {
 };
 
 export default function getExpandedArgs(
-  args = process.argv.slice(2),
+  args: Array<string>,
   { excludeNumArg = false, excludeCharArg = false } = {}
 ): Array<string> {
   try {

@@ -1,29 +1,30 @@
-import executeGit from './helpers/executeGit';
-import getCurrentBranch from './helpers/getCurrentBranch';
+import executeGit, { ExecuteGitOptions } from './helpers/executeGit';
 import listBranches from './helpers/listBranches';
 
 export default class BranchDescription {
   private readonly configSetting: string;
 
-  constructor(specifiedBranch?: string) {
-    const branch = specifiedBranch?.trim() || getCurrentBranch();
-    this.configSetting = `branch.${branch}.description`;
+  constructor(
+    specifiedBranch: string,
+    private readonly executeGitOptions: ExecuteGitOptions,
+  ) {
+    this.configSetting = `branch.${specifiedBranch.trim()}.description`;
   }
 
   show = (): Promise<number> =>
-    executeGit(['config', this.configSetting])
+    executeGit(['config', this.configSetting], this.executeGitOptions)
 
   set = async (description: string): Promise<number | undefined> => {
-    const code = await executeGit(['config', this.configSetting, description]);
-    if (!code) {
+    const code = await executeGit(['config', this.configSetting, description], this.executeGitOptions);
+    if (!code && !this.executeGitOptions.dryRun) {
       listBranches();
     }
     return code;
   }
 
   remove = async (): Promise<number> => {
-    const code = await executeGit(['config', '--unset', this.configSetting]);
-    if (!code) {
+    const code = await executeGit(['config', '--unset', this.configSetting], this.executeGitOptions);
+    if (!code && !this.executeGitOptions.dryRun) {
       listBranches();
     }
     return code;

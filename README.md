@@ -64,7 +64,7 @@ git ds 'My Description'
 ```
 
 ## Tips
+- Add the `--dry-run` option on any `git fury` command to see which git command would be executed, but without actually executing it.
 - It's useful to set a branch description to the URL of a Pull Request.
-- Also useful to set branch description to the URL of the issue / user story for the project management or issue management software you're working with.
 - Mac users using iTerm2 can open a branch description formatted as a URL using cmd+click.
 - Tired of typing `git`? Use bash aliases instead.
