@@ -22,6 +22,7 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
+    "chalk": "^4.1.0",
     "commander": "^5.1.0"
   }
 }

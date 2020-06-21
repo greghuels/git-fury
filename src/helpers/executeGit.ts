@@ -1,11 +1,9 @@
 import { spawn } from 'child_process';
-import Colorizer from './Colorizer';
+import chalk from 'chalk';
 
 export function printDryRun(args: Array<string>): void {
   const text = ['git', ...args].join(' ');
-  const colorizer = new Colorizer();
-  colorizer.fadedNormal(text);
-  colorizer.log();
+  console.log(chalk.reset.dim(text));
 }
 
 export interface ExecuteGitOptions {
