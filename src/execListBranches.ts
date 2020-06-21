@@ -15,9 +15,9 @@ export const shouldExecListBranches = (args: Array<string>): boolean => {
 
 export default function execListBranches(expandedArgs: Array<string>, options: ExecuteGitOptions): number {
   if (options.dryRun) {
-    printDryRun(expandedArgs);
+    printDryRun(expandedArgs, options);
   } else {
-    listBranches();
+    listBranches(options.log);
   }
   return 0;
 }

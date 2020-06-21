@@ -13,7 +13,10 @@ const stripDryRunArgument = (originalArgs: Array<string>): Array<string> => {
   return args;
 };
 
-export default async function fury(originalArgs: Array<string>): Promise<number> {
+export type FuryFn = (originalArgs: Array<string>, customLog?: typeof console.log) => Promise<number>;
+
+const fury: FuryFn = async (originalArgs, customLog?: typeof console.log) => {
+  const log = customLog ?? console.log;
   const args = stripDryRunArgument(originalArgs);
   const dryRun = args.length < originalArgs.length;
   if (shouldExecHelp(args)) {
@@ -23,11 +26,12 @@ export default async function fury(originalArgs: Array<string>): Promise<number>
     return execVersion();
   }
   if (shouldExecBranchDescription(args)) {
-    return await execBranchDescription(args, { dryRun });
+    return await execBranchDescription(args, { log, dryRun });
   }
   if (shouldExecListBranches(args)) {
-    return execListBranches(args, { dryRun });
+    return execListBranches(args, { log, dryRun });
   }
-  return await execShorthandGitCommand(args, { dryRun });
-}
+  return await execShorthandGitCommand(args, { log, dryRun });
+};
 
+export default fury;

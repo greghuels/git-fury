@@ -11,10 +11,10 @@ function getBranchListing(ch: string, branch: string, currentBranch: string): st
   return chalk.reset(prefixText) + chalk.yellow(`(${ch})`) + branchColor(` ${branch}`) + chalk.reset.dim(` ${desc}`);
 }
 
-export default function listBranches(): void {
+export default function listBranches(log: typeof console.log): void {
   const currentBranch = getCurrentBranch();
   const charToBranchMap = getCharToBranchMap();
   Object.entries(charToBranchMap).forEach(([ch, branch]) => {
-    console.log(getBranchListing(ch, branch, currentBranch));
+    log(getBranchListing(ch, branch, currentBranch));
   });
 }

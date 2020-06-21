@@ -17,7 +17,7 @@ export default class BranchDescription {
   set = async (description: string): Promise<number | undefined> => {
     const code = await executeGit(['config', this.configSetting, description], this.executeGitOptions);
     if (!code && !this.executeGitOptions.dryRun) {
-      listBranches();
+      listBranches(this.executeGitOptions.log);
     }
     return code;
   }
@@ -25,7 +25,7 @@ export default class BranchDescription {
   remove = async (): Promise<number> => {
     const code = await executeGit(['config', '--unset', this.configSetting], this.executeGitOptions);
     if (!code && !this.executeGitOptions.dryRun) {
-      listBranches();
+      listBranches(this.executeGitOptions.log);
     }
     return code;
   }

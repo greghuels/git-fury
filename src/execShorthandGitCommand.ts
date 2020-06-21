@@ -6,7 +6,7 @@ export default async function execShorthandGitCommand(args: Array<string>, optio
   const expandedArgs = getExpandedArgs(args);
   const code = await executeGit(expandedArgs, options);
   if (!options.dryRun) {
-    listBranches();
+    listBranches(options.log);
   }
   return code;
 }
