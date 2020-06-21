@@ -16,19 +16,12 @@ export type CharToBranchMap = {
 }
 
 export default function getCharToBranchMap(): CharToBranchMap {
-  try {
-    let num = 1;
-    return execSync('git branch --format=\'%(refname:short)\'').toString().split('\n').reduce((acc, branch) => {
-      if (branch) {
-        acc[getCharFromNum(num)] = branch;
-        num += 1;
-      }
-      return acc;
-    }, {} as CharToBranchMap);
-  } catch (e) {
-    if (e && e.status) {
-      process.exit(e.status);
+  let num = 1;
+  return execSync('git branch --format=\'%(refname:short)\'').toString().split('\n').reduce((acc, branch) => {
+    if (branch) {
+      acc[getCharFromNum(num)] = branch;
+      num += 1;
     }
-    throw e;
-  }
+    return acc;
+  }, {} as CharToBranchMap);
 }

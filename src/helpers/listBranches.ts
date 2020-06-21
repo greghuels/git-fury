@@ -12,16 +12,9 @@ function getBranchListing(ch: string, branch: string, currentBranch: string): st
 }
 
 export default function listBranches(): void {
-  try {
-    const currentBranch = getCurrentBranch();
-    const charToBranchMap = getCharToBranchMap();
-    Object.entries(charToBranchMap).forEach(([ch, branch]) => {
-      console.log(getBranchListing(ch, branch, currentBranch));
-    });
-  } catch (e) {
-    if (e && e.status) {
-      process.exit(e.status);
-    }
-    throw e;
-  }
+  const currentBranch = getCurrentBranch();
+  const charToBranchMap = getCharToBranchMap();
+  Object.entries(charToBranchMap).forEach(([ch, branch]) => {
+    console.log(getBranchListing(ch, branch, currentBranch));
+  });
 }
