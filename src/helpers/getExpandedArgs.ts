@@ -8,26 +8,74 @@ const getMemoizedCharToBranchMap = (): CharToBranchMap => {
   return _charToBranchMap;
 };
 
-export default function getExpandedArgs(
-  args: Array<string>,
-  { excludeNumArg = false, excludeCharArg = false } = {}
-): Array<string> {
+const expandNumericArg = (arg: string): string | null => {
+  if (/^\d{1,3}$/.test(arg)) {
+    const parsedArg = parseInt(arg, 10);
+    return `HEAD~${parsedArg}`;
+  }
+  return null;
+};
+
+const expandAlphabeticArg = (arg: string): string | null => {
+  if (/^[a-z]{1,2}$/.test(arg)) {
+    const charToBranchMap = getMemoizedCharToBranchMap();
+    if (charToBranchMap[arg]) {
+      return charToBranchMap[arg];
+    }
+  }
+  return null;
+};
+
+const expandWithTildeOrCaret = (arg: string, ch: '~' | '^'): string | null => {
+  const chIndex = arg.indexOf(ch);
+  if (chIndex > -1) {
+    const expanded = expandAlphabeticArg(arg.slice(0, chIndex));
+    if (expanded) {
+      return `${expanded}${arg.slice(chIndex)}`;
+    }
+  }
+  return null;
+};
+
+const expandWithTilde = (arg: string): string | null => {
+  return expandWithTildeOrCaret(arg, '~');
+};
+
+const expandWithCaret = (arg: string): string | null => {
+  return expandWithTildeOrCaret(arg, '^');
+};
+
+const expandArg = (arg: string) => {
+  const expandedNumeric = expandNumericArg(arg);
+  if (expandedNumeric) {
+    return expandedNumeric;
+  }
+  const expandedAlphabetic = expandAlphabeticArg(arg);
+  if (expandedAlphabetic) {
+    return expandedAlphabetic;
+  }
+  const expandedWithTilde = expandWithTilde(arg);
+  if (expandedWithTilde) {
+    return expandedWithTilde;
+  }
+  const expandedWithCaret = expandWithCaret(arg);
+  if (expandedWithCaret) {
+    return expandedWithCaret;
+  }
+  return arg;
+};
+
+export default function getExpandedArgs(args: Array<string>): Array<string> {
   try {
     return args.map(arg => {
       const trimmedArg = arg.trim();
-      if (!excludeNumArg && /^\d+$/.test(trimmedArg)) {
-        const parsedArg = parseInt(trimmedArg, 10);
-        if (parsedArg < 1000) {
-          return `HEAD~${parsedArg}`;
-        }
+      if (trimmedArg.includes(':')) {
+        return trimmedArg.split(':').map(expandArg).join(':');
       }
-      if (!excludeCharArg && /^[a-z]{1,2}$/.test(trimmedArg)) {
-        const charToBranchMap = getMemoizedCharToBranchMap();
-        if (charToBranchMap[trimmedArg]) {
-          return charToBranchMap[trimmedArg];
-        }
+      if (trimmedArg.includes('/')) {
+        return trimmedArg.split('/').map(expandArg).join('/');
       }
-      return trimmedArg;
+      return expandArg(trimmedArg);
     });
   } catch (e) {
     if (e && e.status) {

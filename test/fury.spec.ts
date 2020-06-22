@@ -57,4 +57,44 @@ describe('execShorthandGitCommand', () => {
     expect(executeGit).toHaveBeenCalledWith(['rebase', '--onto', 'master', 'HEAD~1'], { dryRun: false, log });
   });
 
+  it('should work with tilde', async () => {
+    await fury(['diff', 'b~1', 'b']);
+    expect(executeGit).toHaveBeenCalledWith(['diff', 'master~1', 'master'], { dryRun: false, log });
+
+    executeGit.mockClear();
+    await fury(['diff', 'HEAD~1', 'HEAD']);
+    expect(executeGit).toHaveBeenCalledWith(['diff', 'HEAD~1', 'HEAD'], { dryRun: false, log });
+  });
+
+  it('should work with caret', async () => {
+    await fury(['diff', 'b^1', 'b']);
+    expect(executeGit).toHaveBeenCalledWith(['diff', 'master^1', 'master'], { dryRun: false, log });
+
+    executeGit.mockClear();
+    await fury(['diff', 'HEAD^1', 'HEAD']);
+    expect(executeGit).toHaveBeenCalledWith(['diff', 'HEAD^1', 'HEAD'], { dryRun: false, log });
+  });
+
+  it('should work with colon', async () => {
+    await fury(['push', '.', 'HEAD:b']);
+    expect(executeGit).toHaveBeenCalledWith(['push', '.', 'HEAD:master'], { dryRun: false, log });
+
+    executeGit.mockClear();
+    await fury(['push', '.', 'HEAD:master']);
+    expect(executeGit).toHaveBeenCalledWith(['push', '.', 'HEAD:master'], { dryRun: false, log });
+  });
+
+  it('should work with slash', async () => {
+    await fury(['fetch', 'origin/b']);
+    expect(executeGit).toHaveBeenCalledWith(['fetch', 'origin/master'], { dryRun: false, log });
+
+    executeGit.mockClear();
+    await fury(['fetch', 'origin/master']);
+    expect(executeGit).toHaveBeenCalledWith(['fetch', 'origin/master'], { dryRun: false, log });
+  });
+
+  it('should work with combinations of special chars', async () => {
+    await fury(['push', '.', 'b~1:a']);
+    expect(executeGit).toHaveBeenCalledWith(['push', '.', 'master~1:another-topic-branch'], { dryRun: false, log });
+  });
 });
