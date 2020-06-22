@@ -37,33 +37,12 @@ const expandWithTildeOrCaret = (arg: string, ch: '~' | '^'): string | null => {
   return null;
 };
 
-const expandWithTilde = (arg: string): string | null => {
-  return expandWithTildeOrCaret(arg, '~');
-};
-
-const expandWithCaret = (arg: string): string | null => {
-  return expandWithTildeOrCaret(arg, '^');
-};
-
-const expandArg = (arg: string) => {
-  const expandedNumeric = expandNumericArg(arg);
-  if (expandedNumeric) {
-    return expandedNumeric;
-  }
-  const expandedAlphabetic = expandAlphabeticArg(arg);
-  if (expandedAlphabetic) {
-    return expandedAlphabetic;
-  }
-  const expandedWithTilde = expandWithTilde(arg);
-  if (expandedWithTilde) {
-    return expandedWithTilde;
-  }
-  const expandedWithCaret = expandWithCaret(arg);
-  if (expandedWithCaret) {
-    return expandedWithCaret;
-  }
-  return arg;
-};
+const expandArg = (arg: string) =>
+  expandNumericArg(arg)
+    ?? expandAlphabeticArg(arg)
+    ?? expandWithTildeOrCaret(arg, '~')
+    ?? expandWithTildeOrCaret(arg, '^')
+    ?? arg;
 
 export default function getExpandedArgs(args: Array<string>): Array<string> {
   try {
