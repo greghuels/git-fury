@@ -1,8 +1,9 @@
-import { spawn } from 'child_process';
 import chalk from 'chalk';
+import { spawn } from 'child_process';
+import { quote } from 'shell-quote';
 
 export function printDryRun(args: Array<string>, options: ExecuteGitOptions): void {
-  const text = ['git', ...args].join(' ');
+  const text = quote(['git', ...args]);
   options.log(chalk.reset.dim(text));
 }
 
