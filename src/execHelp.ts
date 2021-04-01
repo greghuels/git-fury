@@ -1,5 +1,5 @@
 export const shouldExecHelp = (args: Array<string>): boolean =>
-  args.includes('-h') || args.includes('--help');
+  !args.length || args.includes('-h') || args.includes('--help');
 
 export default function execHelp(): number {
   console.log('Usage: git fury [options]');
