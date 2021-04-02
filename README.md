@@ -25,24 +25,26 @@ git config --global alias.rb 'fury rebase'
 git config --global alias.rs 'fury reset'
 ```
 
-## Usage
+Note: Any git command works with git fury, not just those listed in the aliases. Feel free to configure aliases as you see fit.
 
+## Usage
 
 ### Shorthand Syntax
 
-#### Numbers get prepended with `HEAD~`
-  - `git fury diff 2 1` expands to `git diff HEAD~2 HEAD~1`
-  - `git df 2 1` also expands if the optional aliases are set up
+#### Numbers are prepended with `HEAD~`
 
-#### Letters get expanded to branch names
+  - `git fury diff 2 1` is shorthand `git diff HEAD~2 HEAD~1`
+  - `git df 2 1` is also shorthand if the optional aliases are set up (see [Installation](#installation))
+
+#### Letters represent branch names
 
 ![](images/basic-example.png)
- - `git co b` expands to `git checkout some-branch` (assuming aliases are set up)
- - `git rb -i a` expands to `git rebase -i master` (assuming aliases are set up)
+ - `git co b` is shorthand for `git checkout some-branch` (assuming aliases are set up)
+ - `git rb -i a` is shorthand for `git rebase -i master` (assuming aliases are set up)
 
 #### See it in action
-![](images/demo.gif)
 
+![](images/demo.gif)
 
 ### Manage Branch Descriptions
 
@@ -60,11 +62,12 @@ git fury desc a -S               # Show description for branch (a)
 git fury desc a -D               # Delete description for branch (a)
 
 ## or with aliases set up
-git ds 'My Description'
+git ds 'My description'
 ```
 
 ## Tips
-- Add the `--dry-run` option on any `git fury` command to see which git command would be executed, but without actually executing it.
-- It's useful to set a branch description to the URL of a Pull Request.
+
+- Add the `--dry-run` option on any `git fury` command to see which git command would be executed, but without actually executing it. This also works if aliases are set up.
+- It's useful to set the branch description to a URL (e.g. a pull request, user story, bug ticket, etc).
 - Mac users using iTerm2 can open a branch description formatted as a URL using cmd+click.
 - Tired of typing `git`? Use bash aliases instead.
