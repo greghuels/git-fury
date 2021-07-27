@@ -13,9 +13,8 @@ const stripDryRunArgument = (originalArgs: Array<string>): Array<string> => {
   return args;
 };
 
-export type FuryFn = (originalArgs: Array<string>, customLog?: typeof console.log) => Promise<number>;
 
-const fury: FuryFn = async (originalArgs, customLog?: typeof console.log) => {
+const fury = async (originalArgs: Array<string>, customLog?: typeof console.log): Promise<number> => {
   const log = customLog ?? console.log;
   const args = stripDryRunArgument(originalArgs);
   const dryRun = args.length < originalArgs.length;
