@@ -1,20 +1,21 @@
-import chalk from 'chalk';
-import getBranchDescription from './getBranchDescription';
-import getCharToBranchMap from './getCharToBranchMap';
-import getCurrentBranch from './getCurrentBranch';
+import { colors } from '../../deps.ts';
+import getBranchDescription from './getBranchDescription.ts';
+import getCharToBranchMap from './getCharToBranchMap.ts';
+import getCurrentBranch from './getCurrentBranch.ts';
 
-function getBranchListing(ch: string, branch: string, currentBranch: string): string {
+async function getBranchListing(ch: string, branch: string, currentBranch: string): Promise<string> {
   const isCurrentBranch = branch === currentBranch;
-  const desc = getBranchDescription(branch);
+  const desc = await getBranchDescription(branch); // TODO: Cache these
   const prefixText = isCurrentBranch ? '* ' : '  ';
-  const branchColor = isCurrentBranch ? chalk.green : chalk.reset;
-  return chalk.reset(prefixText) + chalk.yellow(`(${ch})`) + branchColor(` ${branch}`) + chalk.reset.dim(` ${desc}`);
+  const branchColor = isCurrentBranch ? colors.green : colors.reset;
+  return colors.reset(prefixText) + colors.yellow(`(${ch})`) + branchColor(` ${branch}`) + colors.reset(colors.dim(` ${desc}`));
 }
 
-export default function listBranches(log: typeof console.log): void {
-  const currentBranch = getCurrentBranch();
-  const charToBranchMap = getCharToBranchMap();
-  Object.entries(charToBranchMap).forEach(([ch, branch]) => {
-    log(getBranchListing(ch, branch, currentBranch));
-  });
+export default async function listBranches(log: typeof console.log): Promise<void> {
+  const currentBranch = await getCurrentBranch();
+  const charToBranchMap = await getCharToBranchMap();
+  for (const entry of Object.entries(charToBranchMap)) {
+    const [ch, branch] = entry;
+    log(await getBranchListing(ch, branch, currentBranch));
+  }
 }

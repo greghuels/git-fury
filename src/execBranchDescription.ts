@@ -1,17 +1,16 @@
-import { program } from 'commander';
+import program from './program.ts';
+import BranchDescription from './BranchDescription.ts';
+import getCurrentBranch from './helpers/getCurrentBranch.ts';
+import { ExecuteGitOptions } from './helpers/executeGit.ts';
+import getExpandedArgs from './helpers/getExpandedArgs.ts';
 
-import BranchDescription from './BranchDescription';
-import getCurrentBranch from './helpers/getCurrentBranch';
-import { ExecuteGitOptions } from './helpers/executeGit';
-import getExpandedArgs from './helpers/getExpandedArgs';
-
-function getBranchName(descArgs: Array<string>) {
+async function getBranchName(descArgs: Array<string>): Promise<string> {
   const filteredArgs = descArgs.filter(arg => arg !== '-D' && arg !== '-S');
   const isDeleteOrShow = filteredArgs.length !== descArgs.length;
   if (isDeleteOrShow) {
-    return filteredArgs[0] ?? getCurrentBranch();
+    return filteredArgs[0] ?? (await getCurrentBranch());
   } else {
-    return filteredArgs.length < 2 ? getCurrentBranch() : filteredArgs[0];
+    return filteredArgs.length < 2 ? (await getCurrentBranch()) : filteredArgs[0];
   }
 }
 
@@ -19,7 +18,7 @@ export const shouldExecBranchDescription = (args: Array<string>): boolean =>
   args[0] === 'desc';
 
 export default async function execBranchDescription(originalArgs: Array<string>, options: ExecuteGitOptions): Promise<number> {
-  const expandedArgs = getExpandedArgs(originalArgs);
+  const expandedArgs = await getExpandedArgs(originalArgs);
   const descArgs = expandedArgs.slice(1);
   program
     .usage('desc [branch] <description|options>')
@@ -31,7 +30,7 @@ export default async function execBranchDescription(originalArgs: Array<string>,
     program.outputHelp();
     return 1;
   } else {
-    const branchName = getBranchName(descArgs);
+    const branchName = await getBranchName(descArgs);
     const branchDescription = new BranchDescription(branchName, options);
     let code: number;
     if (descArgs.includes('-D')) {

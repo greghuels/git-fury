@@ -1,11 +1,13 @@
 
-import { execSync } from 'child_process';
+import { exec } from './subprocess.ts';
 
-export default function getCurrentBranch(): string {
-  try {
-    const curBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
-    return curBranch === 'HEAD' ? '' : curBranch.trim();
-  } catch (e) {
-    return '';
+export default async function getCurrentBranch(): Promise<string> {
+  const { code, output, error } = await exec('git', 'rev-parse', '--abbrev-ref', 'HEAD')
+  if (!code) {
+    const curBranch = output.trim();
+    return curBranch === 'HEAD' ? '' : curBranch;
+  } else {
+    console.error(error);
+    Deno.exit(code);
   }
 }

@@ -1,10 +1,10 @@
-import chalk from 'chalk';
-import { spawn } from 'child_process';
-import { quote } from 'shell-quote';
+import { colors } from '../../deps.ts';
+import { spawn } from './subprocess.ts'
+import quote from './quote.ts';
 
 export function printDryRun(args: Array<string>, options: ExecuteGitOptions): void {
   const text = quote(['git', ...args]);
-  options.log(chalk.reset.dim(text));
+  options.log(colors.reset(colors.dim(text)));
 }
 
 export interface ExecuteGitOptions {
@@ -13,15 +13,10 @@ export interface ExecuteGitOptions {
 }
 
 export default async function executeGit(expandedArgs: Array<string>, options: ExecuteGitOptions): Promise<number> {
-  return new Promise((resolve) => {
-    if (options.dryRun) {
-      printDryRun(expandedArgs, options);
-      resolve(0);
-    } else {
-      const child = spawn('git', [...expandedArgs], { stdio: 'inherit' });
-      child.on('exit', (code) => {
-        resolve(code);
-      });
-    }
-  });
+  if (options.dryRun) {
+    printDryRun(expandedArgs, options);
+    return 0;
+  } else {
+    return await spawn('git', ...expandedArgs);
+  }
 }

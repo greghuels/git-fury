@@ -1,13 +1,12 @@
-import getExpandedArgs from './helpers/getExpandedArgs';
-import executeGit, { ExecuteGitOptions } from './helpers/executeGit';
-import listBranches from './helpers/listBranches';
+import getExpandedArgs from './helpers/getExpandedArgs.ts';
+import executeGit, { ExecuteGitOptions } from './helpers/executeGit.ts';
+import listBranches from './helpers/listBranches.ts';
 
 export default async function execShorthandGitCommand(args: Array<string>, options: ExecuteGitOptions): Promise<number> {
-  const expandedArgs = getExpandedArgs(args);
+  const expandedArgs = await getExpandedArgs(args);
   const code = await executeGit(expandedArgs, options);
   if (!options.dryRun) {
-    listBranches(options.log);
+    await listBranches(options.log);
   }
   return code;
 }
-

@@ -1,9 +1,9 @@
-import getCharToBranchMap, { CharToBranchMap } from './getCharToBranchMap';
+import getCharToBranchMap, { CharToBranchMap } from './getCharToBranchMap.ts';
 
 let _charToBranchMap: CharToBranchMap;
-const getMemoizedCharToBranchMap = (): CharToBranchMap => {
+const getMemoizedCharToBranchMap = async (): Promise<CharToBranchMap> => {
   if (!_charToBranchMap) {
-    _charToBranchMap = getCharToBranchMap();
+    _charToBranchMap = await getCharToBranchMap();
   }
   return _charToBranchMap;
 };
@@ -16,9 +16,9 @@ const expandNumericArg = (arg: string): string | null => {
   return null;
 };
 
-const expandAlphabeticArg = (arg: string): string | null => {
+const expandAlphabeticArg = async (arg: string): Promise<string|null> => {
   if (/^[a-z]{1,2}$/.test(arg)) {
-    const charToBranchMap = getMemoizedCharToBranchMap();
+    const charToBranchMap = await getMemoizedCharToBranchMap();
     if (charToBranchMap[arg]) {
       return charToBranchMap[arg];
     }
@@ -26,10 +26,10 @@ const expandAlphabeticArg = (arg: string): string | null => {
   return null;
 };
 
-const expandWithTildeOrCaret = (arg: string, ch: '~' | '^'): string | null => {
+const expandWithTildeOrCaret = async (arg: string, ch: '~' | '^'): Promise<string|null> => {
   const chIndex = arg.indexOf(ch);
   if (chIndex > -1) {
-    const expanded = expandAlphabeticArg(arg.slice(0, chIndex));
+    const expanded = await expandAlphabeticArg(arg.slice(0, chIndex));
     if (expanded) {
       return `${expanded}${arg.slice(chIndex)}`;
     }
@@ -37,28 +37,38 @@ const expandWithTildeOrCaret = (arg: string, ch: '~' | '^'): string | null => {
   return null;
 };
 
-const expandArg = (arg: string) =>
+const expandArg = async (arg: string) =>
   expandNumericArg(arg)
-    ?? expandAlphabeticArg(arg)
-    ?? expandWithTildeOrCaret(arg, '~')
-    ?? expandWithTildeOrCaret(arg, '^')
+    ?? await expandAlphabeticArg(arg)
+    ?? await expandWithTildeOrCaret(arg, '^')
+    ?? await expandWithTildeOrCaret(arg, '~')
     ?? arg;
 
-export default function getExpandedArgs(args: Array<string>): Array<string> {
+const expandArgs = async (args: Array<string>) => {
+  const expandedArgs: Array<string> = [];
+  for (const arg of args) {
+    expandedArgs.push(await expandArg(arg));
+  }
+  return expandedArgs;
+}
+
+export default async function getExpandedArgs(args: Array<string>): Promise<string[]> {
   try {
-    return args.map(arg => {
+    const expandedArgs: Array<string> = [];
+    for (const arg of args) {
       const trimmedArg = arg.trim();
       if (trimmedArg.includes(':')) {
-        return trimmedArg.split(':').map(expandArg).join(':');
+        expandedArgs.push((await expandArgs(trimmedArg.split(':'))).join(':'));
+      } else if (trimmedArg.includes('/')) {
+        expandedArgs.push((await expandArgs(trimmedArg.split('/'))).join('/'));
+      } else {
+        expandedArgs.push(await expandArg(arg));
       }
-      if (trimmedArg.includes('/')) {
-        return trimmedArg.split('/').map(expandArg).join('/');
-      }
-      return expandArg(trimmedArg);
-    });
+    }
+    return expandedArgs;
   } catch (e) {
     if (e && e.status) {
-      process.exit(e.status);
+      Deno.exit(e.status);
     }
     throw e;
   }

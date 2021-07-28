@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { exec } from './subprocess.ts';
 
 function getCharFromNum(num: number): string {
   const i = num - 1;
@@ -15,13 +15,20 @@ export type CharToBranchMap = {
  [char: string]: string
 }
 
-export default function getCharToBranchMap(): CharToBranchMap {
+export default async function getCharToBranchMap(): Promise<CharToBranchMap> {
   let num = 1;
-  return execSync('git branch --format=\'%(refname:short)\'').toString().split('\n').reduce((acc, branch) => {
-    if (branch) {
-      acc[getCharFromNum(num)] = branch;
-      num += 1;
-    }
-    return acc;
-  }, {} as CharToBranchMap);
+  const { code, output, error } = await exec('git', 'branch', '--format=%(refname:short)')
+  if (!code) {
+    const branches = output.split('\n');
+    return branches.reduce((acc, branch) => {
+      if (branch) {
+        acc[getCharFromNum(num)] = branch;
+        num += 1;
+      }
+      return acc;
+    }, {} as CharToBranchMap);
+  } else {
+    console.error(error);
+    Deno.exit(code);
+  }
 }

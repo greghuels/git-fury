@@ -1,5 +1,5 @@
-import { printDryRun, ExecuteGitOptions } from './helpers/executeGit';
-import listBranches from './helpers/listBranches';
+import { printDryRun, ExecuteGitOptions } from './helpers/executeGit.ts';
+import listBranches from './helpers/listBranches.ts';
 
 export const shouldExecListBranches = (args: Array<string>): boolean => {
   if (args[0] === 'branch') {
@@ -13,12 +13,11 @@ export const shouldExecListBranches = (args: Array<string>): boolean => {
   return false;
 };
 
-export default function execListBranches(expandedArgs: Array<string>, options: ExecuteGitOptions): number {
+export default async function execListBranches(expandedArgs: Array<string>, options: ExecuteGitOptions): Promise<number> {
   if (options.dryRun) {
     printDryRun(expandedArgs, options);
   } else {
-    listBranches(options.log);
+    await listBranches(options.log);
   }
   return 0;
 }
-

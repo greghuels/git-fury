@@ -1,11 +1,18 @@
-import { execSync } from 'child_process';
-import { quote } from 'shell-quote';
+import { exec } from './subprocess.ts'
 
-export default function getBranchDescription (branch: string): string {
+export default async function getBranchDescription (branch: string): Promise<string> {
   try {
-    const cmd = quote(['git', 'config', `branch.${branch}.description`]);
-    return execSync(cmd).toString().trim();
+    const { code, output, error } = await exec('git', 'config', `branch.${branch}.description`);
+    if (!code) {
+      return output.trim();
+    } else if (code === 1 && !error) {
+      return '';
+    } else {
+      console.error(error);
+      Deno.exit(code);
+    }
   } catch (e) {
-    return '';
-  }
+    console.error(e);
+    Deno.exit(1);
+}
 }
