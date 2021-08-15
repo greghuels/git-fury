@@ -16,15 +16,15 @@ export class BranchService {
 
   private async getBranchListing(ch: string, branch: string, currentBranch: string): Promise<string> {
     const isCurrentBranch = branch === currentBranch;
-    const desc = await getBranchDescription(branch);
+    const desc = await this.getBranchDescription(branch);
     const prefixText = isCurrentBranch ? '* ' : '  ';
     const branchColor = isCurrentBranch ? colors.green : colors.reset;
     return colors.reset(prefixText) + colors.yellow(`(${ch})`) + branchColor(` ${branch}`) + colors.reset(colors.dim(` ${desc}`));
   }
 
   async listBranches() {
-    const currentBranch = await getCurrentBranch();
-    const charToBranchMap = await getCharToBranchMap();
+    const currentBranch = await this.getCurrentBranch();
+    const charToBranchMap = await this.getCharToBranchMap();
     for (const entry of Object.entries(charToBranchMap)) {
       const [ch, branch] = entry;
       this.log(await this.getBranchListing(ch, branch, currentBranch));
