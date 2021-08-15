@@ -1,5 +1,4 @@
 import { FuryOptions, ServiceContainer } from "./fury.d.ts";
-import { printDryRun } from './helpers/executeGit.ts';
 
 export const shouldExecListBranches = (args: Array<string>): boolean => {
   if (args[0] === 'branch') {
@@ -15,7 +14,8 @@ export const shouldExecListBranches = (args: Array<string>): boolean => {
 
 export default async function execListBranches(expandedArgs: Array<string>, options: FuryOptions, services: ServiceContainer): Promise<number> {
   if (options.dryRun) {
-    printDryRun(expandedArgs, services);
+    const { gitService } = services;
+    gitService.printDryRun(expandedArgs);
   } else {
     const { branchService } = services;
     await branchService.listBranches();

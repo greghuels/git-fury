@@ -1,6 +1,5 @@
 import program from './program.ts';
 import BranchDescription from './BranchDescription.ts';
-import getExpandedArgs from './helpers/getExpandedArgs.ts';
 import { FuryOptions } from "./fury.d.ts";
 import { ServiceContainer } from "./fury.d.ts";
 
@@ -19,9 +18,9 @@ export const shouldExecBranchDescription = (args: Array<string>): boolean =>
   args[0] === 'desc';
 
 export default async function execBranchDescription(originalArgs: Array<string>, options: FuryOptions, services: ServiceContainer): Promise<number> {
-  const { branchService } = services;
+  const { branchService, gitService } = services;
   const charToBranchMap = await branchService.getCharToBranchMap();
-  const expandedArgs = getExpandedArgs(originalArgs, charToBranchMap);
+  const expandedArgs = gitService.getExpandedArgs(originalArgs, charToBranchMap);
   const descArgs = expandedArgs.slice(1);
   program
     .usage('desc [branch] <description|options>')

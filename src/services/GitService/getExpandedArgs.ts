@@ -1,4 +1,4 @@
-import { CharToBranchMap } from "../services/BranchService/getCharToBranchMap.ts";
+import { CharToBranchMap } from "../BranchService/getCharToBranchMap.ts";
 
 const expandNumericArg = (arg: string): string | null => {
   if (/^\d{1,3}$/.test(arg)) {

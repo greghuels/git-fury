@@ -6,6 +6,7 @@ import execVersion, { shouldExecVersion } from './execVersion.ts';
 import { ServiceContainer } from "./fury.d.ts";
 import { FuryOptions } from "./fury.d.ts";
 import { BranchService } from "./services/BranchService/BranchService.ts";
+import { GitService } from "./services/GitService/GitService.ts";
 
 const stripDryRunArgument = (originalArgs: Array<string>): Array<string> => {
   const args = [...originalArgs];
@@ -24,7 +25,8 @@ export default async function fury (originalArgs: Array<string>, customServices?
 
   const services = customServices ?? {
     log: console.log,
-    branchService: new BranchService(options, console.log)
+    branchService: new BranchService(options, console.log),
+    gitService: new GitService(options, console.log),
   }
 
   if (shouldExecHelp(args)) {
