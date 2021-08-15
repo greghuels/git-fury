@@ -1,34 +1,39 @@
-import executeGit, { ExecuteGitOptions } from './helpers/executeGit.ts';
+import { FuryOptions } from "./fury.d.ts";
+import { ServiceContainer } from "./fury.d.ts";
+import executeGit from './helpers/executeGit.ts';
 import listBranches from './helpers/listBranches.ts';
 
 export default class BranchDescription {
   private readonly configSetting: string;
-  private readonly executeGitOptions: ExecuteGitOptions;
+  private readonly options: FuryOptions;
+  private readonly services: ServiceContainer;
 
   constructor(
     specifiedBranch: string,
-    executeGitOptions: ExecuteGitOptions,
+    options: FuryOptions,
+    services: ServiceContainer,
   ) {
     this.configSetting = `branch.${specifiedBranch.trim()}.description`;
-    this.executeGitOptions = executeGitOptions;
+    this.options = options;
+    this.services = services;
   }
 
   show = (): Promise<number> =>
-    executeGit(['config', this.configSetting], this.executeGitOptions)
+    executeGit(['config', this.configSetting], this.options, this.services)
 
   set = async (description: string): Promise<number> => {
-    const code = await executeGit(['config', this.configSetting, description], this.executeGitOptions);
-    if (!code && !this.executeGitOptions.dryRun) {
-      await listBranches(this.executeGitOptions.log);
+    const code = await executeGit(['config', this.configSetting, description], this.options, this.services);
+    if (!code && !this.options.dryRun) {
+      await listBranches(this.services.log);
       return 0;
     }
     return code;
   }
 
   remove = async (): Promise<number> => {
-    const code = await executeGit(['config', '--unset', this.configSetting], this.executeGitOptions);
-    if (!code && !this.executeGitOptions.dryRun) {
-      await listBranches(this.executeGitOptions.log);
+    const code = await executeGit(['config', '--unset', this.configSetting], this.options, this.services);
+    if (!code && !this.options.dryRun) {
+      await listBranches(this.services.log);
     }
     return code;
   }

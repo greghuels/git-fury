@@ -1,4 +1,5 @@
-import { printDryRun, ExecuteGitOptions } from './helpers/executeGit.ts';
+import { FuryOptions, ServiceContainer } from "./fury.d.ts";
+import { printDryRun } from './helpers/executeGit.ts';
 import listBranches from './helpers/listBranches.ts';
 
 export const shouldExecListBranches = (args: Array<string>): boolean => {
@@ -13,11 +14,11 @@ export const shouldExecListBranches = (args: Array<string>): boolean => {
   return false;
 };
 
-export default async function execListBranches(expandedArgs: Array<string>, options: ExecuteGitOptions): Promise<number> {
+export default async function execListBranches(expandedArgs: Array<string>, options: FuryOptions, services: ServiceContainer): Promise<number> {
   if (options.dryRun) {
-    printDryRun(expandedArgs, options);
+    printDryRun(expandedArgs, services);
   } else {
-    await listBranches(options.log);
+    await listBranches(services.log);
   }
   return 0;
 }
