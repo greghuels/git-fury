@@ -1,17 +1,17 @@
 import program from './program.ts';
 import BranchDescription from './BranchDescription.ts';
-import getCurrentBranch from './helpers/getCurrentBranch.ts';
 import getExpandedArgs from './helpers/getExpandedArgs.ts';
 import { FuryOptions } from "./fury.d.ts";
 import { ServiceContainer } from "./fury.d.ts";
 
-async function getBranchName(descArgs: Array<string>): Promise<string> {
+async function getBranchName(descArgs: Array<string>, services: ServiceContainer): Promise<string> {
+  const { branchService } = services;
   const filteredArgs = descArgs.filter(arg => arg !== '-D' && arg !== '-S');
   const isDeleteOrShow = filteredArgs.length !== descArgs.length;
   if (isDeleteOrShow) {
-    return filteredArgs[0] ?? (await getCurrentBranch());
+    return filteredArgs[0] ?? (await branchService.getCurrentBranch());
   } else {
-    return filteredArgs.length < 2 ? (await getCurrentBranch()) : filteredArgs[0];
+    return filteredArgs.length < 2 ? (await branchService.getCurrentBranch()) : filteredArgs[0];
   }
 }
 
@@ -19,7 +19,9 @@ export const shouldExecBranchDescription = (args: Array<string>): boolean =>
   args[0] === 'desc';
 
 export default async function execBranchDescription(originalArgs: Array<string>, options: FuryOptions, services: ServiceContainer): Promise<number> {
-  const expandedArgs = await getExpandedArgs(originalArgs);
+  const { branchService } = services;
+  const charToBranchMap = await branchService.getCharToBranchMap();
+  const expandedArgs = getExpandedArgs(originalArgs, charToBranchMap);
   const descArgs = expandedArgs.slice(1);
   program
     .usage('desc [branch] <description|options>')
@@ -31,7 +33,7 @@ export default async function execBranchDescription(originalArgs: Array<string>,
     program.outputHelp();
     return 1;
   } else {
-    const branchName = await getBranchName(descArgs);
+    const branchName = await getBranchName(descArgs, services);
     const branchDescription = new BranchDescription(branchName, options, services);
     let code: number;
     if (descArgs.includes('-D')) {

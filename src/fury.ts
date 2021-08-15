@@ -5,6 +5,7 @@ import execShorthandGitCommand from './execShorthandGitCommand.ts';
 import execVersion, { shouldExecVersion } from './execVersion.ts';
 import { ServiceContainer } from "./fury.d.ts";
 import { FuryOptions } from "./fury.d.ts";
+import { BranchService } from "./services/BranchService/BranchService.ts";
 
 const stripDryRunArgument = (originalArgs: Array<string>): Array<string> => {
   const args = [...originalArgs];
@@ -16,12 +17,16 @@ const stripDryRunArgument = (originalArgs: Array<string>): Array<string> => {
 };
 
 
-export default async function fury (originalArgs: Array<string>, customLog?: typeof console.log): Promise<number> {
-  const log = customLog ?? console.log;
+export default async function fury (originalArgs: Array<string>, customServices?: ServiceContainer): Promise<number> {
   const args = stripDryRunArgument(originalArgs);
   const dryRun = args.length < originalArgs.length;
   const options: FuryOptions = { dryRun };
-  const services: ServiceContainer = { log };
+
+  const services = customServices ?? {
+    log: console.log,
+    branchService: new BranchService(options, console.log)
+  }
+
   if (shouldExecHelp(args)) {
     return execHelp();
   }

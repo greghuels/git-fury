@@ -1,4 +1,4 @@
-import { exec } from './subprocess.ts'
+import { exec } from '../../helpers/subprocess.ts'
 
 export default async function getBranchDescription (branch: string): Promise<string> {
   try {

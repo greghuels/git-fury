@@ -1,12 +1,4 @@
-import getCharToBranchMap, { CharToBranchMap } from './getCharToBranchMap.ts';
-
-let _charToBranchMap: CharToBranchMap;
-const getMemoizedCharToBranchMap = async (): Promise<CharToBranchMap> => {
-  if (!_charToBranchMap) {
-    _charToBranchMap = await getCharToBranchMap();
-  }
-  return _charToBranchMap;
-};
+import { CharToBranchMap } from "../services/BranchService/getCharToBranchMap.ts";
 
 const expandNumericArg = (arg: string): string | null => {
   if (/^\d{1,3}$/.test(arg)) {
@@ -16,9 +8,8 @@ const expandNumericArg = (arg: string): string | null => {
   return null;
 };
 
-const expandAlphabeticArg = async (arg: string): Promise<string|null> => {
+const expandAlphabeticArg = (arg: string, charToBranchMap: CharToBranchMap): string|null => {
   if (/^[a-z]{1,2}$/.test(arg)) {
-    const charToBranchMap = await getMemoizedCharToBranchMap();
     if (charToBranchMap[arg]) {
       return charToBranchMap[arg];
     }
@@ -26,10 +17,10 @@ const expandAlphabeticArg = async (arg: string): Promise<string|null> => {
   return null;
 };
 
-const expandWithTildeOrCaret = async (arg: string, ch: '~' | '^'): Promise<string|null> => {
+const expandWithTildeOrCaret = (arg: string, ch: '~' | '^', charToBranchMap: CharToBranchMap): string|null => {
   const chIndex = arg.indexOf(ch);
   if (chIndex > -1) {
-    const expanded = await expandAlphabeticArg(arg.slice(0, chIndex));
+    const expanded = expandAlphabeticArg(arg.slice(0, chIndex), charToBranchMap);
     if (expanded) {
       return `${expanded}${arg.slice(chIndex)}`;
     }
@@ -37,32 +28,32 @@ const expandWithTildeOrCaret = async (arg: string, ch: '~' | '^'): Promise<strin
   return null;
 };
 
-const expandArg = async (arg: string) =>
+const expandArg = (arg: string, charToBranchMap: CharToBranchMap) =>
   expandNumericArg(arg)
-    ?? await expandAlphabeticArg(arg)
-    ?? await expandWithTildeOrCaret(arg, '^')
-    ?? await expandWithTildeOrCaret(arg, '~')
+    ?? expandAlphabeticArg(arg, charToBranchMap)
+    ?? expandWithTildeOrCaret(arg, '^', charToBranchMap)
+    ?? expandWithTildeOrCaret(arg, '~', charToBranchMap)
     ?? arg;
 
-const expandArgs = async (args: Array<string>) => {
+const expandArgs = (args: Array<string>, charToBranchMap: CharToBranchMap) => {
   const expandedArgs: Array<string> = [];
   for (const arg of args) {
-    expandedArgs.push(await expandArg(arg));
+    expandedArgs.push(expandArg(arg, charToBranchMap));
   }
   return expandedArgs;
 }
 
-export default async function getExpandedArgs(args: Array<string>): Promise<string[]> {
+export default function getExpandedArgs(args: Array<string>, charToBranchMap: CharToBranchMap): string[] {
   try {
     const expandedArgs: Array<string> = [];
     for (const arg of args) {
       const trimmedArg = arg.trim();
       if (trimmedArg.includes(':')) {
-        expandedArgs.push((await expandArgs(trimmedArg.split(':'))).join(':'));
+        expandedArgs.push((expandArgs(trimmedArg.split(':'), charToBranchMap)).join(':'));
       } else if (trimmedArg.includes('/')) {
-        expandedArgs.push((await expandArgs(trimmedArg.split('/'))).join('/'));
+        expandedArgs.push((expandArgs(trimmedArg.split('/'), charToBranchMap)).join('/'));
       } else {
-        expandedArgs.push(await expandArg(arg));
+        expandedArgs.push(expandArg(arg, charToBranchMap));
       }
     }
     return expandedArgs;

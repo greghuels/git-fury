@@ -1,4 +1,4 @@
-import { exec } from './subprocess.ts';
+import { exec } from '../../helpers/subprocess.ts';
 
 function getCharFromNum(num: number): string {
   const i = num - 1;

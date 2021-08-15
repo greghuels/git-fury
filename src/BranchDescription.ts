@@ -1,7 +1,6 @@
 import { FuryOptions } from "./fury.d.ts";
 import { ServiceContainer } from "./fury.d.ts";
 import executeGit from './helpers/executeGit.ts';
-import listBranches from './helpers/listBranches.ts';
 
 export default class BranchDescription {
   private readonly configSetting: string;
@@ -24,7 +23,8 @@ export default class BranchDescription {
   set = async (description: string): Promise<number> => {
     const code = await executeGit(['config', this.configSetting, description], this.options, this.services);
     if (!code && !this.options.dryRun) {
-      await listBranches(this.services.log);
+      const { branchService } = this.services;
+      await branchService.listBranches();
       return 0;
     }
     return code;
@@ -33,7 +33,8 @@ export default class BranchDescription {
   remove = async (): Promise<number> => {
     const code = await executeGit(['config', '--unset', this.configSetting], this.options, this.services);
     if (!code && !this.options.dryRun) {
-      await listBranches(this.services.log);
+      const { branchService } = this.services;
+      await branchService.listBranches();
     }
     return code;
   }
