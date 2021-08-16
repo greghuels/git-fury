@@ -1,5 +1,4 @@
-import { FuryOptions } from "./fury.d.ts";
-import { ServiceContainer } from "./fury.d.ts";
+import { FuryOptions, ServiceContainer } from "./fury.d.ts";
 
 export default async function execShorthandGitCommand(args: Array<string>, options: FuryOptions, services: ServiceContainer): Promise<number> {
   const { branchService, gitService } = services;

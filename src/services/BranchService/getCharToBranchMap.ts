@@ -1,4 +1,4 @@
-import { exec } from '../../helpers/subprocess.ts';
+import BranchRepository from "../../repositories/BranchRepository.ts";
 
 function getCharFromNum(num: number): string {
   const i = num - 1;
@@ -17,18 +17,12 @@ export type CharToBranchMap = {
 
 export default async function getCharToBranchMap(): Promise<CharToBranchMap> {
   let num = 1;
-  const { code, output, error } = await exec('git', 'branch', '--format=%(refname:short)')
-  if (!code) {
-    const branches = output.split('\n');
-    return branches.reduce((acc, branch) => {
-      if (branch) {
-        acc[getCharFromNum(num)] = branch;
-        num += 1;
-      }
-      return acc;
-    }, {} as CharToBranchMap);
-  } else {
-    console.error(error);
-    Deno.exit(code);
-  }
+  const branches = await BranchRepository.getAvailableBranches();
+  return branches.reduce((acc, branch) => {
+    if (branch) {
+      acc[getCharFromNum(num)] = branch;
+      num += 1;
+    }
+    return acc;
+  }, {} as CharToBranchMap);
 }

@@ -21,7 +21,7 @@ const stripDryRunArgument = (originalArgs: Array<string>): Array<string> => {
 const getDefaultServices = (options: FuryOptions): ServiceContainer => {
   const log = console.log;
   const gitService = new GitService(options, log);
-  const branchService = new BranchService(options, log);
+  const branchService = new BranchService(log);
   const branchDescriptionService = new BranchDescriptionService(options, gitService, branchService);
 
   return { log, gitService, branchService, branchDescriptionService };
