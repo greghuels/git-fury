@@ -1,9 +1,9 @@
-import { FuryOptions } from "../../fury.d.ts";
-import quote from "../../helpers/quote.ts";
-import { CharToBranchMap } from "../BranchService/getCharToBranchMap.ts";
-import { colors } from '../../../deps.ts';
-import { spawn } from "../../helpers/subprocess.ts";
-import getExpandedArgs from "./getExpandedArgs.ts";
+import { FuryOptions } from "../fury.d.ts";
+import quote from "../helpers/quote.ts";
+import { CharToBranchMap } from "../helpers/getCharToBranchMap.ts";
+import { colors } from '../../deps.ts';
+import { spawn } from "../helpers/subprocess.ts";
+import getExpandedArgs from "../helpers/getExpandedArgs.ts";
 
 export class GitService {
   private readonly options: FuryOptions;

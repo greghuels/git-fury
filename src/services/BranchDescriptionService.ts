@@ -1,6 +1,6 @@
-import { FuryOptions } from "../../fury.d.ts";
-import { BranchService } from "../BranchService/BranchService.ts";
-import { GitService } from "../GitService/GitService.ts";
+import { FuryOptions } from '../fury.d.ts';
+import { BranchService } from './BranchService.ts';
+import { GitService } from './GitService.ts';
 
 export default class BranchDescriptionService {
   private readonly options: FuryOptions;

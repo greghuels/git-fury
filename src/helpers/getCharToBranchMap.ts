@@ -1,5 +1,3 @@
-import BranchRepository from "../../repositories/BranchRepository.ts";
-
 function getCharFromNum(num: number): string {
   const i = num - 1;
   if (num > 26) {
@@ -15,9 +13,8 @@ export type CharToBranchMap = {
  [char: string]: string
 }
 
-export default async function getCharToBranchMap(): Promise<CharToBranchMap> {
+export default function getCharToBranchMap(branches: Array<string>): CharToBranchMap {
   let num = 1;
-  const branches = await BranchRepository.getAvailableBranches();
   return branches.reduce((acc, branch) => {
     if (branch) {
       acc[getCharFromNum(num)] = branch;

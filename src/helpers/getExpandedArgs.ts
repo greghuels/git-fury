@@ -1,4 +1,4 @@
-import { CharToBranchMap } from "../BranchService/getCharToBranchMap.ts";
+import { CharToBranchMap } from "./getCharToBranchMap.ts";
 
 const expandNumericArg = (arg: string): string | null => {
   if (/^\d{1,3}$/.test(arg)) {
@@ -44,23 +44,16 @@ const expandArgs = (args: Array<string>, charToBranchMap: CharToBranchMap) => {
 }
 
 export default function getExpandedArgs(args: Array<string>, charToBranchMap: CharToBranchMap): string[] {
-  try {
-    const expandedArgs: Array<string> = [];
-    for (const arg of args) {
-      const trimmedArg = arg.trim();
-      if (trimmedArg.includes(':')) {
-        expandedArgs.push((expandArgs(trimmedArg.split(':'), charToBranchMap)).join(':'));
-      } else if (trimmedArg.includes('/')) {
-        expandedArgs.push((expandArgs(trimmedArg.split('/'), charToBranchMap)).join('/'));
-      } else {
-        expandedArgs.push(expandArg(arg, charToBranchMap));
-      }
+  const expandedArgs: Array<string> = [];
+  for (const arg of args) {
+    const trimmedArg = arg.trim();
+    if (trimmedArg.includes(':')) {
+      expandedArgs.push((expandArgs(trimmedArg.split(':'), charToBranchMap)).join(':'));
+    } else if (trimmedArg.includes('/')) {
+      expandedArgs.push((expandArgs(trimmedArg.split('/'), charToBranchMap)).join('/'));
+    } else {
+      expandedArgs.push(expandArg(arg, charToBranchMap));
     }
-    return expandedArgs;
-  } catch (e) {
-    if (e && e.status) {
-      Deno.exit(e.status);
-    }
-    throw e;
   }
+  return expandedArgs;
 }

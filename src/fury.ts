@@ -5,9 +5,9 @@ import execShorthandGitCommand from './execShorthandGitCommand.ts';
 import execVersion, { shouldExecVersion } from './execVersion.ts';
 import { ServiceContainer } from "./fury.d.ts";
 import { FuryOptions } from "./fury.d.ts";
-import BranchDescriptionService from "./services/BranchDescriptionService/BranchDescriptionService.ts";
-import { BranchService } from "./services/BranchService/BranchService.ts";
-import { GitService } from "./services/GitService/GitService.ts";
+import BranchDescriptionService from "./services/BranchDescriptionService.ts";
+import { BranchService } from "./services/BranchService.ts";
+import { GitService } from "./services/GitService.ts";
 
 const stripDryRunArgument = (originalArgs: Array<string>): Array<string> => {
   const args = [...originalArgs];
@@ -26,7 +26,6 @@ const getDefaultServices = (options: FuryOptions): ServiceContainer => {
 
   return { log, gitService, branchService, branchDescriptionService };
 }
-
 
 export default async function fury (originalArgs: Array<string>, customServices?: ServiceContainer): Promise<number> {
   const args = stripDryRunArgument(originalArgs);

@@ -1,6 +1,6 @@
 import fury from "../src/fury.ts";
-import { BranchService } from "../src/services/BranchService/BranchService.ts";
-import { GitService } from "../src/services/GitService/GitService.ts";
+import { BranchService } from "../src/services/BranchService.ts";
+import { GitService } from "../src/services/GitService.ts";
 import {
   beforeEach,
   describe,
@@ -9,7 +9,7 @@ import {
   run,
 } from "https://deno.land/x/tincan@0.2.1/mod.ts";
 import { stub, Stub } from 'https://deno.land/x/mock@v0.10.0/mod.ts';
-import BranchDescriptionService from "../src/services/BranchDescriptionService/BranchDescriptionService.ts";
+import BranchDescriptionService from "../src/services/BranchDescriptionService.ts";
 
 describe('execShorthandGitCommand', () => {
   let gitService: GitService;
@@ -22,7 +22,7 @@ describe('execShorthandGitCommand', () => {
   beforeEach(() => {
    const options = { dryRun: false };
     gitService = new GitService(options, log);
-    branchService = new BranchService(options, log);
+    branchService = new BranchService(log);
     branchDescriptionService = new BranchDescriptionService(options, gitService, branchService);
     stub(branchService, 'getCharToBranchMap', () => Promise.resolve({
       'a': 'another-topic-branch',
