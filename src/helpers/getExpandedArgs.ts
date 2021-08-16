@@ -8,7 +8,10 @@ const expandNumericArg = (arg: string): string | null => {
   return null;
 };
 
-const expandAlphabeticArg = (arg: string, charToBranchMap: CharToBranchMap): string|null => {
+const expandAlphabeticArg = (
+  arg: string,
+  charToBranchMap: CharToBranchMap,
+): string | null => {
   if (/^[a-z]{1,2}$/.test(arg)) {
     if (charToBranchMap[arg]) {
       return charToBranchMap[arg];
@@ -17,10 +20,17 @@ const expandAlphabeticArg = (arg: string, charToBranchMap: CharToBranchMap): str
   return null;
 };
 
-const expandWithTildeOrCaret = (arg: string, ch: '~' | '^', charToBranchMap: CharToBranchMap): string|null => {
+const expandWithTildeOrCaret = (
+  arg: string,
+  ch: "~" | "^",
+  charToBranchMap: CharToBranchMap,
+): string | null => {
   const chIndex = arg.indexOf(ch);
   if (chIndex > -1) {
-    const expanded = expandAlphabeticArg(arg.slice(0, chIndex), charToBranchMap);
+    const expanded = expandAlphabeticArg(
+      arg.slice(0, chIndex),
+      charToBranchMap,
+    );
     if (expanded) {
       return `${expanded}${arg.slice(chIndex)}`;
     }
@@ -29,11 +39,11 @@ const expandWithTildeOrCaret = (arg: string, ch: '~' | '^', charToBranchMap: Cha
 };
 
 const expandArg = (arg: string, charToBranchMap: CharToBranchMap) =>
-  expandNumericArg(arg)
-    ?? expandAlphabeticArg(arg, charToBranchMap)
-    ?? expandWithTildeOrCaret(arg, '^', charToBranchMap)
-    ?? expandWithTildeOrCaret(arg, '~', charToBranchMap)
-    ?? arg;
+  expandNumericArg(arg) ??
+    expandAlphabeticArg(arg, charToBranchMap) ??
+    expandWithTildeOrCaret(arg, "^", charToBranchMap) ??
+    expandWithTildeOrCaret(arg, "~", charToBranchMap) ??
+    arg;
 
 const expandArgs = (args: Array<string>, charToBranchMap: CharToBranchMap) => {
   const expandedArgs: Array<string> = [];
@@ -41,16 +51,23 @@ const expandArgs = (args: Array<string>, charToBranchMap: CharToBranchMap) => {
     expandedArgs.push(expandArg(arg, charToBranchMap));
   }
   return expandedArgs;
-}
+};
 
-export default function getExpandedArgs(args: Array<string>, charToBranchMap: CharToBranchMap): string[] {
+export default function getExpandedArgs(
+  args: Array<string>,
+  charToBranchMap: CharToBranchMap,
+): string[] {
   const expandedArgs: Array<string> = [];
   for (const arg of args) {
     const trimmedArg = arg.trim();
-    if (trimmedArg.includes(':')) {
-      expandedArgs.push((expandArgs(trimmedArg.split(':'), charToBranchMap)).join(':'));
-    } else if (trimmedArg.includes('/')) {
-      expandedArgs.push((expandArgs(trimmedArg.split('/'), charToBranchMap)).join('/'));
+    if (trimmedArg.includes(":")) {
+      expandedArgs.push(
+        (expandArgs(trimmedArg.split(":"), charToBranchMap)).join(":"),
+      );
+    } else if (trimmedArg.includes("/")) {
+      expandedArgs.push(
+        (expandArgs(trimmedArg.split("/"), charToBranchMap)).join("/"),
+      );
     } else {
       expandedArgs.push(expandArg(arg, charToBranchMap));
     }

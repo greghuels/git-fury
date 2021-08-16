@@ -1,6 +1,6 @@
-import { FuryOptions } from '../fury.d.ts';
-import { BranchService } from './BranchService.ts';
-import { GitService } from './GitService.ts';
+import { FuryOptions } from "../fury.d.ts";
+import { BranchService } from "./BranchService.ts";
+import { GitService } from "./GitService.ts";
 
 export default class BranchDescriptionService {
   private readonly options: FuryOptions;
@@ -17,24 +17,35 @@ export default class BranchDescriptionService {
     this.branchService = branchService;
   }
 
-  private getConfigSetting = (branch: string) => `branch.${branch}.description`
+  private getConfigSetting = (branch: string) => `branch.${branch}.description`;
 
   showBranchDescription = (branch: string): Promise<number> =>
-    this.gitService.executeGit(['config', this.getConfigSetting(branch)])
+    this.gitService.executeGit(["config", this.getConfigSetting(branch)]);
 
-  setBranchDescription = async (branch: string, description: string): Promise<number> => {
-    const code = await this.gitService.executeGit(['config', this.getConfigSetting(branch), description]);
+  setBranchDescription = async (
+    branch: string,
+    description: string,
+  ): Promise<number> => {
+    const code = await this.gitService.executeGit([
+      "config",
+      this.getConfigSetting(branch),
+      description,
+    ]);
     if (!code && !this.options.dryRun) {
       await this.branchService.listBranches();
     }
     return code;
-  }
+  };
 
   removeBranchDescription = async (branch: string): Promise<number> => {
-    const code = await this.gitService.executeGit(['config', '--unset', this.getConfigSetting(branch)]);
+    const code = await this.gitService.executeGit([
+      "config",
+      "--unset",
+      this.getConfigSetting(branch),
+    ]);
     if (!code && !this.options.dryRun) {
       await this.branchService.listBranches();
     }
     return code;
-  }
+  };
 }

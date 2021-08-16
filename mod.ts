@@ -1,4 +1,4 @@
-import fury from './src/fury.ts';
+import fury from "./src/fury.ts";
 
 async function main() {
   const originalArgs = Deno.args;

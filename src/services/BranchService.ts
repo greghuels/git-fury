@@ -1,6 +1,6 @@
-import { colors } from '../../deps.ts';
+import { colors } from "../../deps.ts";
 
-import getCharToBranchMap from '../helpers/getCharToBranchMap.ts'
+import getCharToBranchMap from "../helpers/getCharToBranchMap.ts";
 import BranchRepository from "../repositories/BranchRepository.ts";
 
 export class BranchService {
@@ -24,11 +24,16 @@ export class BranchService {
     }
   }
 
-  private async getBranchListing(ch: string, branch: string, currentBranch: string): Promise<string> {
+  private async getBranchListing(
+    ch: string,
+    branch: string,
+    currentBranch: string,
+  ): Promise<string> {
     const isCurrentBranch = branch === currentBranch;
     const desc = await BranchRepository.getBranchDescription(branch);
-    const prefixText = isCurrentBranch ? '* ' : '  ';
+    const prefixText = isCurrentBranch ? "* " : "  ";
     const branchColor = isCurrentBranch ? colors.green : colors.reset;
-    return colors.reset(prefixText) + colors.yellow(`(${ch})`) + branchColor(` ${branch}`) + colors.reset(colors.dim(` ${desc}`));
+    return colors.reset(prefixText) + colors.yellow(`(${ch})`) +
+      branchColor(` ${branch}`) + colors.reset(colors.dim(` ${desc}`));
   }
 }
