@@ -2,8 +2,8 @@ import { colors } from '../../../deps.ts';
 
 import { FuryOptions } from "../../fury.d.ts";
 import getCharToBranchMap from './getCharToBranchMap.ts'
-import getCurrentBranch from "./getCurrentBranch.ts";
 import getBranchDescription from "./getBranchDescription.ts";
+import { exec } from "../../helpers/subprocess.ts";
 
 export class BranchService {
   private readonly options: FuryOptions;
@@ -39,7 +39,14 @@ export class BranchService {
     return getCharToBranchMap();
   }
 
-  getCurrentBranch() {
-    return getCurrentBranch()
+  async getCurrentBranch() {
+    const { code, output, error } = await exec('git', 'rev-parse', '--abbrev-ref', 'HEAD')
+    if (!code) {
+      const curBranch = output.trim();
+      return curBranch === 'HEAD' ? '' : curBranch;
+    } else {
+      console.error(error);
+      Deno.exit(code);
+    }
   }
 }

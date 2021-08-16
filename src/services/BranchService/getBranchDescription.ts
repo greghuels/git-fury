@@ -14,5 +14,5 @@ export default async function getBranchDescription (branch: string): Promise<str
   } catch (e) {
     console.error(e);
     Deno.exit(1);
-}
+  }
 }

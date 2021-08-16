@@ -1,5 +1,4 @@
 import program from './program.ts';
-import BranchDescription from './BranchDescription.ts';
 import { FuryOptions } from "./fury.d.ts";
 import { ServiceContainer } from "./fury.d.ts";
 
@@ -17,8 +16,8 @@ async function getBranchName(descArgs: Array<string>, services: ServiceContainer
 export const shouldExecBranchDescription = (args: Array<string>): boolean =>
   args[0] === 'desc';
 
-export default async function execBranchDescription(originalArgs: Array<string>, options: FuryOptions, services: ServiceContainer): Promise<number> {
-  const { branchService, gitService } = services;
+export default async function execBranchDescription(originalArgs: Array<string>, services: ServiceContainer): Promise<number> {
+  const { branchService, gitService, branchDescriptionService } = services;
   const charToBranchMap = await branchService.getCharToBranchMap();
   const expandedArgs = gitService.getExpandedArgs(originalArgs, charToBranchMap);
   const descArgs = expandedArgs.slice(1);
@@ -32,16 +31,15 @@ export default async function execBranchDescription(originalArgs: Array<string>,
     program.outputHelp();
     return 1;
   } else {
-    const branchName = await getBranchName(descArgs, services);
-    const branchDescription = new BranchDescription(branchName, options, services);
+    const branchName = (await getBranchName(descArgs, services)).trim();
     let code: number;
     if (descArgs.includes('-D')) {
-      code = await branchDescription.remove();
+      code = await branchDescriptionService.removeBranchDescription(branchName);
     } else if (descArgs.includes('-S')) {
-      code = await branchDescription.show();
+      code = await branchDescriptionService.showBranchDescription(branchName);
     } else {
       const descriptionString = descArgs.length === 2 ? descArgs[1] : descArgs[0];
-      code = await branchDescription.set(descriptionString);
+      code = await branchDescriptionService.setBranchDescription(branchName, descriptionString);
     }
     return code;
   }

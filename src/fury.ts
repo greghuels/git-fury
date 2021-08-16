@@ -5,6 +5,7 @@ import execShorthandGitCommand from './execShorthandGitCommand.ts';
 import execVersion, { shouldExecVersion } from './execVersion.ts';
 import { ServiceContainer } from "./fury.d.ts";
 import { FuryOptions } from "./fury.d.ts";
+import BranchDescriptionService from "./services/BranchDescriptionService/BranchDescriptionService.ts";
 import { BranchService } from "./services/BranchService/BranchService.ts";
 import { GitService } from "./services/GitService/GitService.ts";
 
@@ -17,17 +18,22 @@ const stripDryRunArgument = (originalArgs: Array<string>): Array<string> => {
   return args;
 };
 
+const getDefaultServices = (options: FuryOptions): ServiceContainer => {
+  const log = console.log;
+  const gitService = new GitService(options, log);
+  const branchService = new BranchService(options, log);
+  const branchDescriptionService = new BranchDescriptionService(options, gitService, branchService);
+
+  return { log, gitService, branchService, branchDescriptionService };
+}
+
 
 export default async function fury (originalArgs: Array<string>, customServices?: ServiceContainer): Promise<number> {
   const args = stripDryRunArgument(originalArgs);
   const dryRun = args.length < originalArgs.length;
   const options: FuryOptions = { dryRun };
 
-  const services = customServices ?? {
-    log: console.log,
-    branchService: new BranchService(options, console.log),
-    gitService: new GitService(options, console.log),
-  }
+  const services = customServices ?? getDefaultServices(options);
 
   if (shouldExecHelp(args)) {
     return execHelp();
@@ -36,7 +42,7 @@ export default async function fury (originalArgs: Array<string>, customServices?
     return execVersion();
   }
   if (shouldExecBranchDescription(args)) {
-    return await execBranchDescription(args, options, services);
+    return await execBranchDescription(args, services);
   }
   if (shouldExecListBranches(args)) {
     return await execListBranches(args, options, services);
