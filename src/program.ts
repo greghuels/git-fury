@@ -1,5 +1,5 @@
 import { Denomander } from "../deps.ts";
-import version from './version.ts';
+import version from '../version.ts';
 
 const program = new Denomander({
   app_name: "Git Fury",

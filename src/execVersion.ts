@@ -1,4 +1,4 @@
-import version from './version.ts';
+import version from '../version.ts';
 
 export const shouldExecVersion = (args: Array<string>): boolean =>
   args[0] === '-v' || args[0] === '--version';
