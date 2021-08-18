@@ -7,4 +7,4 @@ if [ $(basename $(pwd)) != "git-fury" ]; then
   exit 1
 fi
 
-deno compile --unstable --allow-run --allow-read --allow-write ./mod.ts
+deno compile --allow-run ./mod.ts

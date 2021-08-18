@@ -20,7 +20,7 @@ for target in "${targets[@]}"
 do
    :
    filename="./target/${version}/git-fury-${target}"
-   deno compile --unstable --allow-run --allow-read --allow-write --target=${target} --output=${filename} ./mod.ts
+   deno compile --allow-run --target=${target} --output=${filename} ./mod.ts
    tar -czf ${filename}.tar.gz ${filename}
    rm -f ${filename}
    shasum -a 256 ${filename}.tar.gz
