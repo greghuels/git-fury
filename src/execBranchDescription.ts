@@ -1,4 +1,3 @@
-import program from "./program.ts";
 import { ServiceContainer } from "./fury.d.ts";
 import BranchRepository from "./repositories/BranchRepository.ts";
 
@@ -14,6 +13,18 @@ async function getBranchName(descArgs: Array<string>): Promise<string> {
   }
 }
 
+const outputHelp = (log: typeof console.log) => {
+  log("Usage:  desc [branch] <description|options>");
+  log("Set, show or delete a branch description");
+  log("");
+  log("Options:");
+  log("  -D          Delete description for current or specified branch");
+  log("              branch / shorthand branch");
+  log("  -S          Show description for the current or specified branch");
+  log("              branch / shorthand branch");
+  log("  -h, --help  display help for command");
+};
+
 export const shouldExecBranchDescription = (args: Array<string>): boolean =>
   args[0] === "desc";
 
@@ -28,22 +39,9 @@ export default async function execBranchDescription(
     charToBranchMap,
   );
   const descArgs = expandedArgs.slice(1);
-  program
-    .usage("desc [branch] <description|options>")
-    .option(
-      "-D",
-      "Delete description for the current branch or optionally specified branch / shorthand branch",
-    )
-    .option(
-      "-S",
-      "Show description for the current branch or optionally specified branch / shorthand branch",
-    )
-    .description(
-      "Set, show or delete a branch description for the current branch or optionally specified branch / shorthand branch",
-    );
 
   if (descArgs.length === 0 || descArgs.length > 2) {
-    program.outputHelp();
+    outputHelp(services.log);
     return 1;
   } else {
     const branchName = (await getBranchName(descArgs)).trim();
