@@ -7,69 +7,90 @@ fu and increase productivity.
 
 - [Installation](#installation)
 - [Usage](#usage)
+- [Demo](#demo)
 - [Tips](#tips)
 
 ## Installation
 
-```sh
-npm install -g git-fury
+#### Homebrew
 
-### optionally set aliases to enhance productivity
+```sh
+brew install greghuels/tap/git-fury
+```
+
+#### Building from Source
+
+1. Download and unpack the source code from the
+   [latest release](https://github.com/greghuels/git-fury/releases/latest)
+1. `cd` to unpacked directory
+1. Build source: `deno compile --allow-run ./mod.ts` (using
+   [deno](https://deno.land/))
+1. Move binary: `mv ./git-fury /usr/local/bin`
+
+#### Setting Aliases (recommended)
+
+```sh
 git config --global alias.br 'fury branch'
 git config --global alias.co 'fury checkout'
 git config --global alias.cp 'fury cherry-pick'
 git config --global alias.df 'fury diff'
 git config --global alias.ds 'fury desc' # custom "git-fury" command to set and delete branch descriptions
-git config --global alias.lg 'fury log --graph --oneline'
+git config --global alias.lg 'fury log --graph --oneline --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset"'
 git config --global alias.mg 'fury merge'
 git config --global alias.rb 'fury rebase'
 git config --global alias.rs 'fury reset'
 ```
 
-Note: Any git command works with git fury, not just those listed in the aliases.
-Feel free to configure aliases as you see fit.
-
 ## Usage
 
-### Shorthand Syntax
+**TIP:** Add the `--dry-run` option on any `git fury` command to see which git
+command would be executed, but without actually executing it. This also works if
+aliases are set up.
 
-#### Numbers are prepended with `HEAD~`
+#### Shorthand Syntax
 
-- `git fury diff 2 1` is shorthand `git diff HEAD~2 HEAD~1`
-- `git df 2 1` is also shorthand if the optional aliases are set up (see
-  [Installation](#installation))
+- Alphabetic characters (a-zz) represent branch names
+- Numeric characters (0-999) are prepended with `HEAD~`
 
-#### Letters represent branch names
+<img src="https://github.com/greghuels/git-fury/blob/main/images/basic-example.png" width="400" />
 
-![](images/basic-example.png)
+```sh
+## Without aliases configured
+git fury diff 2 1         # git diff HEAD~2 HEAD~1
 
-- `git co b` is shorthand for `git checkout some-branch` (assuming aliases are
-  set up)
-- `git rb -i a` is shorthand for `git rebase -i master` (assuming aliases are
-  set up)
+## With aliases configured
+git co b                  # git checkout some-branch
+git df 2 1                # git diff HEAD~2 HEAD~1
+git rb --onto origin/a 1  # git rebase --onto origin/main HEAD~1
 
-#### See it in action
+## Hashes and branch names still work!
+git co 17c422g            # git checkout 17c422g
+git co some-branch        # git checkout some-branch
+```
 
-![](images/demo.gif)
-
-### Manage Branch Descriptions
+#### Manage Branch Descriptions
 
 Branch descriptions allow you to add notes to branches.
 
-![](images/set-branch-description.png)
+<img src="https://github.com/greghuels/git-fury/blob/main/images/set-branch-description.png" width="400" />
 
 ```sh
-git fury desc 'My description'   # Set description for current branch
-git fury desc -S                 # Show description for current branch
-git fury desc -D                 # Delete description for current branch
+## Without 'ds' alias configured
+git fury desc 'My description'
 
-git fury desc a 'My description' # Set description for branch (a)
-git fury desc a -S               # Show description for branch (a)
-git fury desc a -D               # Delete description for branch (a)
+## With 'ds' alias configured
+git ds 'My description'   # Set description for current branch
+git ds -S                 # Show description for current branch
+git ds -D                 # Delete description for current branch
 
-## or with aliases set up
-git ds 'My description'
+git ds a 'My description' # Set description for branch (a)
+git ds a -S               # Show description for branch (a)
+git ds a -D               # Delete description for branch (a)
 ```
+
+## Demo
+
+![](images/demo.gif)
 
 ## Tips
 
