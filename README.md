@@ -2,6 +2,9 @@
 
 A lightweight git utility that enables shorthand git syntax to sharpen your git fu and increase productivity.
 
+**git-fury is no longer maintained on npm.**
+See [github.com/greghuels/git-fury](https://github.com/greghuels/git-fury) for latest version.
+
 ## Table of Contents
 
 - [Installation](#installation)
