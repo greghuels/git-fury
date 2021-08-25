@@ -41,6 +41,8 @@ git config --global alias.rb 'fury rebase'
 git config --global alias.rs 'fury reset'
 ```
 
+Any git command works with git fury, not just those listed above. Feel free to configure aliases as you see fit. 
+
 ## Usage
 
 **TIP:** Add the `--dry-run` option on any `git fury` command to see which git
