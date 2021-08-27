@@ -50,7 +50,7 @@ configure aliases as you see fit.
 
 ## Demo
 
-![](images/demo.gif)
+<img src="https://github.com/greghuels/git-fury/blob/main/images/demo.gif" width="600" />
 
 ## Usage
 
