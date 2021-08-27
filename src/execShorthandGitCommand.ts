@@ -10,7 +10,6 @@ export default async function execShorthandGitCommand(
   const expandedArgs = gitService.getExpandedArgs(args, charToBranchMap);
   const code = await gitService.executeGit(expandedArgs);
   if (!options.dryRun) {
-    const { branchService } = services;
     await branchService.listBranches();
   }
   return code;
