@@ -3,11 +3,15 @@
 A lightweight git utility that enables shorthand git syntax to sharpen your git
 fu and increase productivity.
 
+- Manage Branch Descriptions
+- Alphabetic characters (a-zz) represent branch names
+- Numeric characters (0-999) are prepended with `HEAD~`
+
 ## Table of Contents
 
 - [Installation](#installation)
-- [Usage](#usage)
 - [Demo](#demo)
+- [Usage](#usage)
 - [Tips](#tips)
 
 ## Installation
@@ -41,7 +45,12 @@ git config --global alias.rb 'fury rebase'
 git config --global alias.rs 'fury reset'
 ```
 
-Any git command works with git fury, not just those listed above. Feel free to configure aliases as you see fit. 
+Any git command works with git fury, not just those listed above. Feel free to
+configure aliases as you see fit.
+
+## Demo
+
+![](images/demo.gif)
 
 ## Usage
 
@@ -89,10 +98,6 @@ git ds a 'My description' # Set description for branch (a)
 git ds a -S               # Show description for branch (a)
 git ds a -D               # Delete description for branch (a)
 ```
-
-## Demo
-
-![](images/demo.gif)
 
 ## Tips
 
