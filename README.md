@@ -127,3 +127,17 @@ git ds a -D               # Delete description for branch (a)
 - Mac users using iTerm2 can open a branch description formatted as a URL using
   cmd+click.
 - Tired of typing `git`? Use bash aliases instead.
+
+#### Only Want Branch Descriptions?
+
+`git-fury` commands are opt-in, so you only have to set aliases for commands you
+want to use. For branch descriptions, set the following aliases:
+
+```
+git config --global alias.br 'fury branch'
+git config --global alias.ds 'fury desc'
+```
+
+You can still be productive on the CLI by leveraging tools like
+[fzf](https://github.com/junegunn/fzf) for quickly switching branches. As of git
+1.8.5, you can use `@` as shorthand for `HEAD`.
