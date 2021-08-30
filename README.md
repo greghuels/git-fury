@@ -79,6 +79,24 @@ git co 17c422g            # git checkout 17c422g
 git co some-branch        # git checkout some-branch
 ```
 
+#### Supported Transformations
+
+| Clause   | Transformation |
+| -------- | -------------- |
+| a        | main           |
+| 1        | HEAD~1         |
+| origin/a | origin/main    |
+| origin:a | origin:main    |
+| a~1      | main~1         |
+| a^1      | main^1         |
+
+#### Unsupported Transformations
+
+| Clause     | Transformation |
+| ---------- | -------------- |
+| a..b       | a..b           |
+| --source=a | --source=a     |
+
 #### Manage Branch Descriptions
 
 Branch descriptions allow you to add notes to branches.
