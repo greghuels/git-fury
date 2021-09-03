@@ -2,7 +2,7 @@ import { BranchService } from "./services/BranchService.ts";
 import { GitService } from "./services/GitService.ts";
 import BranchDescriptionService from "./services/BranchDescriptionService.ts";
 import { FuryOptions } from "./fury.d.ts";
-import { Subprocess } from "./helpers/Subprocess.ts";
+import Subprocess from "./helpers/Subprocess.ts";
 import { mock } from "../mod_test.ts";
 
 const { spy } = mock;

@@ -1,4 +1,4 @@
-import { Subprocess } from "../helpers/Subprocess.ts";
+import Subprocess from "../helpers/Subprocess.ts";
 
 export default class BranchRepository {
   static getBranchDescription = async (branch: string): Promise<string> => {

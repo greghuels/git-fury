@@ -1,7 +1,7 @@
 const decode = (std: Uint8Array | undefined) =>
   std ? new TextDecoder().decode(std) : "";
 
-export class Subprocess {
+export default class Subprocess {
   static exec = async (...cmd: Array<string>) => {
     const p = Deno.run({ cmd, stderr: "piped", stdout: "piped" });
     const [status, stdout, stderr] = await Promise.all([

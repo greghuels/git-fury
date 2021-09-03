@@ -1,7 +1,7 @@
 import { FuryOptions } from "../fury.d.ts";
 import shellCommand from "../helpers/shellCommand.ts";
 import { colors } from "../../deps.ts";
-import { Subprocess } from "../helpers/Subprocess.ts";
+import Subprocess from "../helpers/Subprocess.ts";
 import getExpandedArgs from "../helpers/getExpandedArgs.ts";
 
 export class GitService {
