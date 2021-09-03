@@ -18,8 +18,6 @@ describe("execShorthandGitCommand", () => {
   let branchDescriptionService: BranchDescriptionService;
   let executeGit: Stub<GitService>;
 
-  const log: typeof console.log = () => undefined;
-
   beforeEach(() => {
     const options = { dryRun: false };
 
@@ -31,8 +29,9 @@ describe("execShorthandGitCommand", () => {
     BranchRepository.getAvailableBranches = () =>
       Promise.resolve(availableBranches);
 
-    gitService = new GitService(options, log);
-    branchService = new BranchService(log);
+    console.log = () => {};
+    gitService = new GitService(options);
+    branchService = new BranchService();
     branchDescriptionService = new BranchDescriptionService(
       options,
       gitService,
@@ -44,7 +43,6 @@ describe("execShorthandGitCommand", () => {
 
   const execFury = (args: Array<string>) => {
     return fury(args, {
-      log,
       gitService,
       branchService,
       branchDescriptionService,

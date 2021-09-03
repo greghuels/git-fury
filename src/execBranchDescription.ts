@@ -13,16 +13,20 @@ async function getBranchName(descArgs: Array<string>): Promise<string> {
   }
 }
 
-const outputHelp = (log: typeof console.log) => {
-  log("Usage:  desc [branch] <description|options>");
-  log("Set, show or delete a branch description");
-  log("");
-  log("Options:");
-  log("  -D          Delete description for current or specified branch");
-  log("              branch / shorthand branch");
-  log("  -S          Show description for the current or specified branch");
-  log("              branch / shorthand branch");
-  log("  -h, --help  display help for command");
+const outputHelp = () => {
+  console.log("Usage:  desc [branch] <description|options>");
+  console.log("Set, show or delete a branch description");
+  console.log("");
+  console.log("Options:");
+  console.log(
+    "  -D          Delete description for current or specified branch",
+  );
+  console.log("              branch / shorthand branch");
+  console.log(
+    "  -S          Show description for the current or specified branch",
+  );
+  console.log("              branch / shorthand branch");
+  console.log("  -h, --help  display help for command");
 };
 
 export const shouldExecBranchDescription = (args: Array<string>): boolean =>
@@ -41,7 +45,7 @@ export default async function execBranchDescription(
   const descArgs = expandedArgs.slice(1);
 
   if (descArgs.length === 0 || descArgs.length > 2) {
-    outputHelp(services.log);
+    outputHelp();
     return 1;
   } else {
     const branchName = (await getBranchName(descArgs)).trim();
