@@ -10,6 +10,7 @@ import {
 } from "https://deno.land/x/tincan@0.2.1/mod.ts";
 import { Stub, stub } from "https://deno.land/x/mock@v0.10.0/mod.ts";
 import BranchDescriptionService from "../src/services/BranchDescriptionService.ts";
+import BranchRepository from "./repositories/BranchRepository.ts";
 
 describe("execShorthandGitCommand", () => {
   let gitService: GitService;
@@ -21,6 +22,15 @@ describe("execShorthandGitCommand", () => {
 
   beforeEach(() => {
     const options = { dryRun: false };
+
+    const availableBranches = [
+      "another-topic-branch",
+      "main",
+      "my-topic-branch",
+    ];
+    BranchRepository.getAvailableBranches = () =>
+      Promise.resolve(availableBranches);
+
     gitService = new GitService(options, log);
     branchService = new BranchService(log);
     branchDescriptionService = new BranchDescriptionService(
@@ -28,12 +38,6 @@ describe("execShorthandGitCommand", () => {
       gitService,
       branchService,
     );
-    stub(branchService, "getCharToBranchMap", () =>
-      Promise.resolve({
-        "a": "another-topic-branch",
-        "b": "main",
-        "c": "my-topic-branch",
-      }));
     stub(branchService, "listBranches");
     executeGit = stub(gitService, "executeGit");
   });
