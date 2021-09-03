@@ -1,6 +1,6 @@
 import { colors } from "../../deps.ts";
+import getShorthandBranchCharacter from "../helpers/getShorthandBranchCharacter.ts";
 
-import getCharToBranchMap from "../helpers/getCharToBranchMap.ts";
 import BranchRepository from "../repositories/BranchRepository.ts";
 
 export class BranchService {
@@ -12,7 +12,14 @@ export class BranchService {
 
   async getCharToBranchMap() {
     const branches = await BranchRepository.getAvailableBranches();
-    return getCharToBranchMap(branches);
+    let i = 0;
+    return branches.reduce((acc, branch) => {
+      if (branch) {
+        acc[getShorthandBranchCharacter(i)] = branch;
+        i += 1;
+      }
+      return acc;
+    }, {} as Record<string, string>);
   }
 
   async listBranches() {

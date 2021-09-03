@@ -1,6 +1,5 @@
 import { FuryOptions } from "../fury.d.ts";
 import quote from "../helpers/quote.ts";
-import { CharToBranchMap } from "../helpers/getCharToBranchMap.ts";
 import { colors } from "../../deps.ts";
 import { spawn } from "../helpers/subprocess.ts";
 import getExpandedArgs from "../helpers/getExpandedArgs.ts";
@@ -14,7 +13,10 @@ export class GitService {
     this.log = log;
   }
 
-  getExpandedArgs(args: Array<string>, charToBranchMap: CharToBranchMap) {
+  getExpandedArgs(
+    args: Array<string>,
+    charToBranchMap: Record<string, string>,
+  ) {
     return getExpandedArgs(args, charToBranchMap);
   }
 

@@ -1,5 +1,3 @@
-import { CharToBranchMap } from "./getCharToBranchMap.ts";
-
 const expandNumericArg = (arg: string): string | null => {
   if (/^\d{1,3}$/.test(arg)) {
     const parsedArg = parseInt(arg, 10);
@@ -10,7 +8,7 @@ const expandNumericArg = (arg: string): string | null => {
 
 const expandAlphabeticArg = (
   arg: string,
-  charToBranchMap: CharToBranchMap,
+  charToBranchMap: Record<string, string>,
 ): string | null => {
   if (/^[a-z]{1,2}$/.test(arg)) {
     if (charToBranchMap[arg]) {
@@ -23,7 +21,7 @@ const expandAlphabeticArg = (
 const expandWithTildeOrCaret = (
   arg: string,
   ch: "~" | "^",
-  charToBranchMap: CharToBranchMap,
+  charToBranchMap: Record<string, string>,
 ): string | null => {
   const chIndex = arg.indexOf(ch);
   if (chIndex > -1) {
@@ -38,14 +36,17 @@ const expandWithTildeOrCaret = (
   return null;
 };
 
-const expandArg = (arg: string, charToBranchMap: CharToBranchMap) =>
+const expandArg = (arg: string, charToBranchMap: Record<string, string>) =>
   expandNumericArg(arg) ??
     expandAlphabeticArg(arg, charToBranchMap) ??
     expandWithTildeOrCaret(arg, "^", charToBranchMap) ??
     expandWithTildeOrCaret(arg, "~", charToBranchMap) ??
     arg;
 
-const expandArgs = (args: Array<string>, charToBranchMap: CharToBranchMap) => {
+const expandArgs = (
+  args: Array<string>,
+  charToBranchMap: Record<string, string>,
+) => {
   const expandedArgs: Array<string> = [];
   for (const arg of args) {
     expandedArgs.push(expandArg(arg, charToBranchMap));
@@ -55,7 +56,7 @@ const expandArgs = (args: Array<string>, charToBranchMap: CharToBranchMap) => {
 
 export default function getExpandedArgs(
   args: Array<string>,
-  charToBranchMap: CharToBranchMap,
+  charToBranchMap: Record<string, string>,
 ): string[] {
   const expandedArgs: Array<string> = [];
   for (const arg of args) {
