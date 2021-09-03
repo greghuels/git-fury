@@ -6,9 +6,11 @@ import getExpandedArgs from "../helpers/getExpandedArgs.ts";
 
 export class GitService {
   private readonly options: FuryOptions;
+  private readonly log: typeof console.log;
 
-  constructor(options: FuryOptions) {
+  constructor(options: FuryOptions, log: typeof console.log) {
     this.options = options;
+    this.log = log;
   }
 
   getExpandedArgs(
@@ -29,6 +31,6 @@ export class GitService {
 
   printDryRun(args: Array<string>) {
     const text = shellCommand(["git", ...args]);
-    console.log(colors.reset(colors.dim(text)));
+    this.log(colors.reset(colors.dim(text)));
   }
 }

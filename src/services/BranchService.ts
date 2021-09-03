@@ -4,6 +4,12 @@ import getShorthandBranchCharacter from "../helpers/getShorthandBranchCharacter.
 import BranchRepository from "../repositories/BranchRepository.ts";
 
 export class BranchService {
+  private readonly log: typeof console.log;
+
+  constructor(log: typeof console.log) {
+    this.log = log;
+  }
+
   async getCharToBranchMap() {
     const branches = await BranchRepository.getAvailableBranches();
     let i = 0;
@@ -21,7 +27,7 @@ export class BranchService {
     const charToBranchMap = await this.getCharToBranchMap();
     for (const entry of Object.entries(charToBranchMap)) {
       const [ch, branch] = entry;
-      console.log(await this.getBranchListing(ch, branch, currentBranch));
+      this.log(await this.getBranchListing(ch, branch, currentBranch));
     }
   }
 
