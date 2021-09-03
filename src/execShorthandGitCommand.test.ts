@@ -1,26 +1,18 @@
 import fury from "../src/fury.ts";
-import { BranchService } from "../src/services/BranchService.ts";
 import { GitService } from "../src/services/GitService.ts";
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  run,
-} from "https://deno.land/x/tincan@0.2.1/mod.ts";
-import { Stub, stub } from "https://deno.land/x/mock@v0.10.0/mod.ts";
-import BranchDescriptionService from "../src/services/BranchDescriptionService.ts";
+import { mock, tincan } from "../mod_test.ts";
 import BranchRepository from "./repositories/BranchRepository.ts";
+import testSetup from "./testSetup.ts";
+import { ServiceContainer } from "./fury.d.ts";
+
+const { beforeEach, describe, expect, it, run } = tincan;
+const { stub } = mock;
 
 describe("execShorthandGitCommand", () => {
-  let gitService: GitService;
-  let branchService: BranchService;
-  let branchDescriptionService: BranchDescriptionService;
-  let executeGit: Stub<GitService>;
+  let executeGit: mock.Stub<GitService>;
+  let services: ServiceContainer;
 
   beforeEach(() => {
-    const options = { dryRun: false };
-
     const availableBranches = [
       "another-topic-branch",
       "main",
@@ -29,24 +21,12 @@ describe("execShorthandGitCommand", () => {
     BranchRepository.getAvailableBranches = () =>
       Promise.resolve(availableBranches);
 
-    console.log = () => {};
-    gitService = new GitService(options);
-    branchService = new BranchService();
-    branchDescriptionService = new BranchDescriptionService(
-      options,
-      gitService,
-      branchService,
-    );
-    stub(branchService, "listBranches");
-    executeGit = stub(gitService, "executeGit");
+    services = testSetup({ dryRun: false });
+    executeGit = stub(services.gitService, "executeGit");
   });
 
   const execFury = (args: Array<string>) => {
-    return fury(args, {
-      gitService,
-      branchService,
-      branchDescriptionService,
-    });
+    return fury(args, services);
   };
 
   it("should expand letters to branch names", async () => {

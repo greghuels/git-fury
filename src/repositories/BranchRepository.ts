@@ -1,9 +1,9 @@
-import { exec } from "../helpers/subprocess.ts";
+import { Subprocess } from "../helpers/Subprocess.ts";
 
 export default class BranchRepository {
   static getBranchDescription = async (branch: string): Promise<string> => {
     try {
-      const { code, output, error } = await exec(
+      const { code, output, error } = await Subprocess.exec(
         "git",
         "config",
         `branch.${branch}.description`,
@@ -24,7 +24,7 @@ export default class BranchRepository {
 
   static getCurrentBranch = async (): Promise<string> => {
     try {
-      const { code, output, error } = await exec(
+      const { code, output, error } = await Subprocess.exec(
         "git",
         "rev-parse",
         "--abbrev-ref",
@@ -45,7 +45,7 @@ export default class BranchRepository {
 
   static getAvailableBranches = async (): Promise<Array<string>> => {
     try {
-      const { code, output, error } = await exec(
+      const { code, output, error } = await Subprocess.exec(
         "git",
         "branch",
         "--format=%(refname:short)",
