@@ -1,5 +1,4 @@
 import { FuryOptions } from "../fury.d.ts";
-import shellCommand from "../helpers/shellCommand.ts";
 import { colors } from "../../deps.ts";
 import Subprocess from "../helpers/Subprocess.ts";
 import getExpandedArgs from "../helpers/getExpandedArgs.ts";
@@ -30,7 +29,7 @@ export class GitService {
   }
 
   printDryRun(args: Array<string>) {
-    const text = shellCommand(["git", ...args]);
+    const text = ["git", ...args].join(" ");
     this.log(colors.reset(colors.dim(text)));
   }
 }
