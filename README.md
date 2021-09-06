@@ -81,20 +81,22 @@ git co some-branch        # git checkout some-branch
 
 #### Supported Transformations
 
-| Clause   | Transformation |
-| -------- | -------------- |
-| a        | main           |
-| 1        | HEAD~1         |
-| origin/a | origin/main    |
-| origin:a | origin:main    |
-| a~1      | main~1         |
-| a^1      | main^1         |
+| Clause   | Transformation     |
+| -------- | ------------------ |
+| a        | main               |
+| 1        | HEAD~1             |
+| origin/a | origin/main        |
+| origin:a | origin:main        |
+| a~1      | main~1             |
+| a^1      | main^1             |
+| a..b     | main..some-branch  |
+| a...b    | main...some-branch |
 
 #### Unsupported Transformations
 
 | Clause     | Transformation |
 | ---------- | -------------- |
-| a..b       | a..b           |
+| a.b        | a.b            |
 | --source=a | --source=a     |
 
 #### Manage Branch Descriptions

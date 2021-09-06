@@ -117,6 +117,30 @@ describe("execShorthandGitCommand", () => {
     expect(executeGit.calls[1].args[0]).toEqual(["fetch", "origin/main"]);
   });
 
+  it("should work with '...' ", async () => {
+    await execFury(["diff", "b...a"]);
+    expect(executeGit.calls[0].args[0]).toEqual([
+      "diff",
+      "main...another-topic-branch",
+    ]);
+  });
+
+  it("should work with '..' ", async () => {
+    await execFury(["diff", "b..a"]);
+    expect(executeGit.calls[0].args[0]).toEqual([
+      "diff",
+      "main..another-topic-branch",
+    ]);
+  });
+
+  it("should not work with '.' ", async () => {
+    await execFury(["diff", "b.a"]);
+    expect(executeGit.calls[0].args[0]).toEqual([
+      "diff",
+      "b.a",
+    ]);
+  });
+
   it("should work with combinations of special chars", async () => {
     await execFury(["push", ".", "origin/b~1:b"]);
     expect(executeGit.calls[0].args[0]).toEqual([

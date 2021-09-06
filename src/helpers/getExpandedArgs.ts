@@ -66,11 +66,8 @@ export default function getExpandedArgs(
   args: Array<string>,
   charToBranchMap: Record<string, string>,
 ): string[] {
-  const expandedArgs: Array<string> = [];
-  for (const arg of args) {
-    const trimmedArg = arg.trim();
-    const clauseSeparators = [":", "/"];
-    expandedArgs.push(expandArg(trimmedArg, clauseSeparators, charToBranchMap));
-  }
-  return expandedArgs;
+  const clauseSeparators = [":", "/", "..", "..."];
+  return args.map((arg) =>
+    expandArg(arg.trim(), clauseSeparators, charToBranchMap)
+  );
 }
