@@ -7,7 +7,7 @@ export default function shellCommand(cmd: Array<string>) {
     } else {
       return String(str).replace(
         /([A-z]:)?([#!"$&'()*,:;<=>?@\[\\\]^`{|}])/g,
-        "$1\\$2",
+        "$1\$2",
       );
     }
   }).join(" ");
