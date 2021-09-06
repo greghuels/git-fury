@@ -118,11 +118,11 @@ describe("execShorthandGitCommand", () => {
   });
 
   it("should work with combinations of special chars", async () => {
-    await execFury(["push", ".", "b~1:a"]);
+    await execFury(["push", ".", "origin/b~1:b"]);
     expect(executeGit.calls[0].args[0]).toEqual([
       "push",
       ".",
-      "main~1:another-topic-branch",
+      "origin/main~1:main",
     ]);
   });
 });
