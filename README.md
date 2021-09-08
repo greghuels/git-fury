@@ -41,6 +41,7 @@ git config --global alias.df 'fury diff'
 git config --global alias.ds 'fury desc' # custom "git-fury" command to set and delete branch descriptions
 git config --global alias.lg 'fury log --graph --oneline --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset"'
 git config --global alias.mg 'fury merge'
+git config --global alias.ps 'fury push'
 git config --global alias.rb 'fury rebase'
 git config --global alias.rs 'fury reset'
 ```
@@ -73,6 +74,7 @@ git fury diff 2 1         # git diff HEAD~2 HEAD~1
 git co b                  # git checkout some-branch
 git df 2 1                # git diff HEAD~2 HEAD~1
 git rb --onto origin/a 1  # git rebase --onto origin/main HEAD~1
+git ps . origin/a~1:a     # git push . origin/main~1:main
 
 ## Hashes and branch names still work!
 git co 17c422g            # git checkout 17c422g
@@ -81,20 +83,22 @@ git co some-branch        # git checkout some-branch
 
 #### Supported Transformations
 
-| Clause   | Transformation |
-| -------- | -------------- |
-| a        | main           |
-| 1        | HEAD~1         |
-| origin/a | origin/main    |
-| origin:a | origin:main    |
-| a~1      | main~1         |
-| a^1      | main^1         |
+| Clause   | Transformation     |
+| -------- | ------------------ |
+| a        | main               |
+| 1        | HEAD~1             |
+| origin/a | origin/main        |
+| origin:a | origin:main        |
+| a~1      | main~1             |
+| a^1      | main^1             |
+| a..b     | main..some-branch  |
+| a...b    | main...some-branch |
 
 #### Unsupported Transformations
 
 | Clause     | Transformation |
 | ---------- | -------------- |
-| a..b       | a..b           |
+| a.b        | a.b            |
 | --source=a | --source=a     |
 
 #### Manage Branch Descriptions

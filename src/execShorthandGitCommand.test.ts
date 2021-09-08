@@ -11,21 +11,22 @@ const { stub } = mock;
 describe("execShorthandGitCommand", () => {
   let executeGit: mock.Stub<GitService>;
   let services: ServiceContainer;
+  let availableBranches: Array<string>;
 
   beforeEach(() => {
-    const availableBranches = [
+    availableBranches = [
       "another-topic-branch",
       "main",
       "my-topic-branch",
     ];
-    BranchRepository.getAvailableBranches = () =>
-      Promise.resolve(availableBranches);
-
     services = testSetup({ dryRun: false });
     executeGit = stub(services.gitService, "executeGit");
   });
 
   const execFury = (args: Array<string>) => {
+    BranchRepository.getAvailableBranches = () =>
+      Promise.resolve(availableBranches);
+
     return fury(args, services);
   };
 
@@ -37,9 +38,31 @@ describe("execShorthandGitCommand", () => {
     ]);
   });
 
+  it("should not expand branch names for longer than 2-digit branch abbreviations", async () => {
+    availableBranches = new Array(703).fill(undefined).map((_, i) =>
+      `branch${i + 1}`
+    );
+    await execFury(["diff", "zz", "aaa"]);
+    expect(executeGit.calls[0].args[0]).toEqual([
+      "diff",
+      "branch702",
+      "aaa",
+    ]);
+  });
+
   it("should prepend HEAD~ to numbers", async () => {
     await execFury(["diff", "3", "2"]);
     expect(executeGit.calls[0].args[0]).toEqual(["diff", "HEAD~3", "HEAD~2"]);
+  });
+
+  it("should not prepend HEAD~ to numbers greater than 999", async () => {
+    await execFury(["diff", "1000", "999"]);
+    expect(executeGit.calls[0].args[0]).toEqual(["diff", "1000", "HEAD~999"]);
+  });
+
+  it("should not prepend HEAD~ to numbers less less than 0", async () => {
+    await execFury(["diff", "-1", "0"]);
+    expect(executeGit.calls[0].args[0]).toEqual(["diff", "-1", "HEAD~0"]);
   });
 
   it("should expand letters and numbers in the same command", async () => {
@@ -94,12 +117,36 @@ describe("execShorthandGitCommand", () => {
     expect(executeGit.calls[1].args[0]).toEqual(["fetch", "origin/main"]);
   });
 
+  it("should work with '...' ", async () => {
+    await execFury(["diff", "b...a"]);
+    expect(executeGit.calls[0].args[0]).toEqual([
+      "diff",
+      "main...another-topic-branch",
+    ]);
+  });
+
+  it("should work with '..' ", async () => {
+    await execFury(["diff", "b..a"]);
+    expect(executeGit.calls[0].args[0]).toEqual([
+      "diff",
+      "main..another-topic-branch",
+    ]);
+  });
+
+  it("should not work with '.' ", async () => {
+    await execFury(["diff", "b.a"]);
+    expect(executeGit.calls[0].args[0]).toEqual([
+      "diff",
+      "b.a",
+    ]);
+  });
+
   it("should work with combinations of special chars", async () => {
-    await execFury(["push", ".", "b~1:a"]);
+    await execFury(["push", ".", "origin/b~1:b"]);
     expect(executeGit.calls[0].args[0]).toEqual([
       "push",
       ".",
-      "main~1:another-topic-branch",
+      "origin/main~1:main",
     ]);
   });
 });

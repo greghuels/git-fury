@@ -1,4 +1,4 @@
-const expandNumericArg = (arg: string): string | null => {
+const expandNumeric = (arg: string): string | null => {
   if (/^\d{1,3}$/.test(arg)) {
     const parsedArg = parseInt(arg, 10);
     return `HEAD~${parsedArg}`;
@@ -6,7 +6,7 @@ const expandNumericArg = (arg: string): string | null => {
   return null;
 };
 
-const expandAlphabeticArg = (
+const expandAlphabetic = (
   arg: string,
   charToBranchMap: Record<string, string>,
 ): string | null => {
@@ -25,7 +25,7 @@ const expandWithTildeOrCaret = (
 ): string | null => {
   const chIndex = arg.indexOf(ch);
   if (chIndex > -1) {
-    const expanded = expandAlphabeticArg(
+    const expanded = expandAlphabetic(
       arg.slice(0, chIndex),
       charToBranchMap,
     );
@@ -36,42 +36,38 @@ const expandWithTildeOrCaret = (
   return null;
 };
 
-const expandArg = (arg: string, charToBranchMap: Record<string, string>) =>
-  expandNumericArg(arg) ??
-    expandAlphabeticArg(arg, charToBranchMap) ??
-    expandWithTildeOrCaret(arg, "^", charToBranchMap) ??
-    expandWithTildeOrCaret(arg, "~", charToBranchMap) ??
-    arg;
-
-const expandArgs = (
-  args: Array<string>,
+const expandClause = (
+  clause: string,
   charToBranchMap: Record<string, string>,
-) => {
-  const expandedArgs: Array<string> = [];
-  for (const arg of args) {
-    expandedArgs.push(expandArg(arg, charToBranchMap));
+) =>
+  expandNumeric(clause) ??
+    expandAlphabetic(clause, charToBranchMap) ??
+    expandWithTildeOrCaret(clause, "^", charToBranchMap) ??
+    expandWithTildeOrCaret(clause, "~", charToBranchMap) ??
+    clause;
+
+const expandArg = (
+  arg: string,
+  clauseSeparators: Array<string>,
+  charToBranchMap: Record<string, string>,
+): string => {
+  const separators = [...clauseSeparators];
+  const ch = separators.pop();
+  if (ch) {
+    return arg.split(ch).map((clause) =>
+      expandArg(clause, separators, charToBranchMap)
+    ).join(ch);
+  } else {
+    return expandClause(arg, charToBranchMap);
   }
-  return expandedArgs;
 };
 
 export default function getExpandedArgs(
   args: Array<string>,
   charToBranchMap: Record<string, string>,
 ): string[] {
-  const expandedArgs: Array<string> = [];
-  for (const arg of args) {
-    const trimmedArg = arg.trim();
-    if (trimmedArg.includes(":")) {
-      expandedArgs.push(
-        (expandArgs(trimmedArg.split(":"), charToBranchMap)).join(":"),
-      );
-    } else if (trimmedArg.includes("/")) {
-      expandedArgs.push(
-        (expandArgs(trimmedArg.split("/"), charToBranchMap)).join("/"),
-      );
-    } else {
-      expandedArgs.push(expandArg(arg, charToBranchMap));
-    }
-  }
-  return expandedArgs;
+  const clauseSeparators = [":", "/", "..", "..."];
+  return args.map((arg) =>
+    expandArg(arg.trim(), clauseSeparators, charToBranchMap)
+  );
 }
