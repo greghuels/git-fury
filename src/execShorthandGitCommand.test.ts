@@ -149,6 +149,15 @@ describe("execShorthandGitCommand", () => {
       "origin/main~1:main",
     ]);
   });
+
+  it("should not indefinitely run", async () => {
+    availableBranches = ["b", "a"];
+    await execFury(["checkout", "a"]);
+    expect(executeGit.calls[0].args[0]).toEqual(["checkout", "b"]);
+
+    await execFury(["checkout", "a/b~1"]);
+    expect(executeGit.calls[1].args[0]).toEqual(["checkout", "b/a~1"]);
+  });
 });
 
 run();
