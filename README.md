@@ -113,11 +113,11 @@ git fury desc 'My description'
 
 ## With 'ds' alias configured
 git ds 'My description'   # Set description for current branch
-git ds -S                 # Show description for current branch
+git ds -s                 # Show description for current branch
 git ds -D                 # Delete description for current branch
 
 git ds a 'My description' # Set description for branch (a)
-git ds a -S               # Show description for branch (a)
+git ds a -s               # Show description for branch (a)
 git ds a -D               # Delete description for branch (a)
 ```
 
