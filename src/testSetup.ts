@@ -3,7 +3,7 @@ import { GitService } from "./services/GitService.ts";
 import BranchDescriptionService from "./services/BranchDescriptionService.ts";
 import { FuryOptions } from "./fury.d.ts";
 import Subprocess from "./helpers/Subprocess.ts";
-import { mock } from "../mod_test.ts";
+import { mock } from "../dev_deps.ts";
 
 const { spy } = mock;
 
