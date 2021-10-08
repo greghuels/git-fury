@@ -2,7 +2,9 @@ import { ServiceContainer } from "./fury.d.ts";
 import BranchRepository from "./repositories/BranchRepository.ts";
 
 async function getBranchName(descArgs: Array<string>): Promise<string> {
-  const filteredArgs = descArgs.filter((arg) => arg !== "-D" && arg !== "-S");
+  const filteredArgs = descArgs.filter((arg) =>
+    arg !== "-D" && arg !== "-S" && arg !== "-s"
+  );
   const isDeleteOrShow = filteredArgs.length !== descArgs.length;
   if (isDeleteOrShow) {
     return filteredArgs[0] ?? (await BranchRepository.getCurrentBranch());
@@ -20,7 +22,7 @@ const outputHelp = (log: typeof console.log) => {
   log("Options:");
   log("  -D          Delete description for current or specified branch");
   log("              branch / shorthand branch");
-  log("  -S          Show description for the current or specified branch");
+  log("  -s          Show description for the current or specified branch");
   log("              branch / shorthand branch");
   log("  -h, --help  display help for command");
 };
@@ -48,7 +50,7 @@ export default async function execBranchDescription(
     let code: number;
     if (descArgs.includes("-D")) {
       code = await branchDescriptionService.removeBranchDescription(branchName);
-    } else if (descArgs.includes("-S")) {
+    } else if (descArgs.includes("-s") || descArgs.includes("-S")) {
       code = await branchDescriptionService.showBranchDescription(branchName);
     } else {
       const descriptionString = descArgs.length === 2
