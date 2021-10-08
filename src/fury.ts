@@ -1,3 +1,4 @@
+import { parse } from "../deps.ts";
 import execBranchDescription, {
   shouldExecBranchDescription,
 } from "./execBranchDescription.ts";
@@ -15,9 +16,19 @@ import { GitService } from "./services/GitService.ts";
 
 const stripDryRunArgument = (originalArgs: Array<string>): Array<string> => {
   const args = [...originalArgs];
-  const dryRunArgumentIndex = originalArgs.indexOf("--dry-run");
-  if (dryRunArgumentIndex > -1) {
-    args.splice(dryRunArgumentIndex, 1);
+  const dryRun = parse(args)["dry-run"];
+  const shouldExecDryRun = !!dryRun && dryRun !== "false" && dryRun !== "0";
+  if (shouldExecDryRun) {
+    const dryRunArgumentIndex = args.findIndex((arg) =>
+      arg === "--dry-run" || arg.startsWith("--dry-run=")
+    );
+    if (dryRunArgumentIndex > -1) {
+      args.splice(dryRunArgumentIndex, 1);
+    } else {
+      throw new Error(
+        "Error parsing --dry-run argument. Please report this issue to https://github.com/greghuels/git-fury/issues",
+      );
+    }
   }
   return args;
 };
@@ -42,7 +53,6 @@ export default async function fury(
   const args = stripDryRunArgument(originalArgs);
   const dryRun = args.length < originalArgs.length;
   const options: FuryOptions = { dryRun };
-
   const services = customServices ?? getDefaultServices(options);
 
   if (shouldExecHelp(args)) {
