@@ -1,6 +1,6 @@
 import fury from "../src/fury.ts";
 import { GitService } from "../src/services/GitService.ts";
-import { mock, tincan } from "../mod_test.ts";
+import { mock, tincan } from "../dev_deps.ts";
 import BranchRepository from "./repositories/BranchRepository.ts";
 import testSetup from "./testSetup.ts";
 import { ServiceContainer } from "./fury.d.ts";
