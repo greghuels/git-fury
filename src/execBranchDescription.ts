@@ -53,9 +53,7 @@ export default async function execBranchDescription(
     } else if (descArgs.includes("-s") || descArgs.includes("-S")) {
       code = await branchDescriptionService.showBranchDescription(branchName);
     } else {
-      const descriptionString = descArgs.length === 2
-        ? descArgs[1]
-        : descArgs[0];
+      const descriptionString = originalArgs.slice(-1)[0];
       code = await branchDescriptionService.setBranchDescription(
         branchName,
         descriptionString,

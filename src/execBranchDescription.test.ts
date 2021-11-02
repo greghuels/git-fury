@@ -50,6 +50,15 @@ describe("execBranchDescription", () => {
         "my description",
       ]);
     });
+
+    it("does not transform branch description", async () => {
+      await execFury(["desc", "c", "a"]);
+      expect(executeGit.calls[0].args[0]).toEqual([
+        "config",
+        "branch.my-topic-branch.description",
+        "a",
+      ]);
+    });
   });
 
   describe("deleting a branch description", () => {
