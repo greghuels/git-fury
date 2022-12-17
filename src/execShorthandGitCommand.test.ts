@@ -1,11 +1,12 @@
 import fury from "../src/fury.ts";
 import { GitService } from "../src/services/GitService.ts";
-import { mock, tincan } from "../dev_deps.ts";
+import { asserts, bdd, mock } from "../dev_deps.ts";
 import BranchRepository from "./repositories/BranchRepository.ts";
 import testSetup from "./testSetup.ts";
 import { ServiceContainer } from "./fury.d.ts";
 
-const { beforeEach, describe, expect, it, run } = tincan;
+const { beforeEach, describe, it } = bdd;
+const { assertEquals } = asserts;
 const { stub } = mock;
 
 describe("execShorthandGitCommand", () => {
@@ -32,7 +33,7 @@ describe("execShorthandGitCommand", () => {
 
   it("should expand letters to branch names", async () => {
     await execFury(["checkout", "c"]);
-    expect(executeGit.calls[0].args[0]).toEqual([
+    assertEquals(executeGit.calls[0].args[0], [
       "checkout",
       "my-topic-branch",
     ]);
@@ -43,7 +44,7 @@ describe("execShorthandGitCommand", () => {
       `branch${i + 1}`
     );
     await execFury(["diff", "zz", "aaa"]);
-    expect(executeGit.calls[0].args[0]).toEqual([
+    assertEquals(executeGit.calls[0].args[0], [
       "diff",
       "branch702",
       "aaa",
@@ -52,22 +53,22 @@ describe("execShorthandGitCommand", () => {
 
   it("should prepend HEAD~ to numbers", async () => {
     await execFury(["diff", "3", "2"]);
-    expect(executeGit.calls[0].args[0]).toEqual(["diff", "HEAD~3", "HEAD~2"]);
+    assertEquals(executeGit.calls[0].args[0], ["diff", "HEAD~3", "HEAD~2"]);
   });
 
   it("should not prepend HEAD~ to numbers greater than 999", async () => {
     await execFury(["diff", "1000", "999"]);
-    expect(executeGit.calls[0].args[0]).toEqual(["diff", "1000", "HEAD~999"]);
+    assertEquals(executeGit.calls[0].args[0], ["diff", "1000", "HEAD~999"]);
   });
 
   it("should not prepend HEAD~ to numbers less less than 0", async () => {
     await execFury(["diff", "-1", "0"]);
-    expect(executeGit.calls[0].args[0]).toEqual(["diff", "-1", "HEAD~0"]);
+    assertEquals(executeGit.calls[0].args[0], ["diff", "-1", "HEAD~0"]);
   });
 
   it("should expand letters and numbers in the same command", async () => {
     await execFury(["rebase", "--onto", "b", "1"]);
-    expect(executeGit.calls[0].args[0]).toEqual([
+    assertEquals(executeGit.calls[0].args[0], [
       "rebase",
       "--onto",
       "main",
@@ -77,7 +78,7 @@ describe("execShorthandGitCommand", () => {
 
   it("should still respect actual branch names", async () => {
     await execFury(["rebase", "--onto", "main", "1"]);
-    expect(executeGit.calls[0].args[0]).toEqual([
+    assertEquals(executeGit.calls[0].args[0], [
       "rebase",
       "--onto",
       "main",
@@ -87,39 +88,39 @@ describe("execShorthandGitCommand", () => {
 
   it("should work with tilde", async () => {
     await execFury(["diff", "b~1", "b"]);
-    expect(executeGit.calls[0].args[0]).toEqual(["diff", "main~1", "main"]);
+    assertEquals(executeGit.calls[0].args[0], ["diff", "main~1", "main"]);
 
     await execFury(["diff", "HEAD~1", "HEAD"]);
-    expect(executeGit.calls[1].args[0]).toEqual(["diff", "HEAD~1", "HEAD"]);
+    assertEquals(executeGit.calls[1].args[0], ["diff", "HEAD~1", "HEAD"]);
   });
 
   it("should work with caret", async () => {
     await execFury(["diff", "b^1", "b"]);
-    expect(executeGit.calls[0].args[0]).toEqual(["diff", "main^1", "main"]);
+    assertEquals(executeGit.calls[0].args[0], ["diff", "main^1", "main"]);
 
     await execFury(["diff", "HEAD^1", "HEAD"]);
-    expect(executeGit.calls[1].args[0]).toEqual(["diff", "HEAD^1", "HEAD"]);
+    assertEquals(executeGit.calls[1].args[0], ["diff", "HEAD^1", "HEAD"]);
   });
 
   it("should work with colon", async () => {
     await execFury(["push", ".", "HEAD:b"]);
-    expect(executeGit.calls[0].args[0]).toEqual(["push", ".", "HEAD:main"]);
+    assertEquals(executeGit.calls[0].args[0], ["push", ".", "HEAD:main"]);
 
     await execFury(["push", ".", "HEAD:main"]);
-    expect(executeGit.calls[1].args[0]).toEqual(["push", ".", "HEAD:main"]);
+    assertEquals(executeGit.calls[1].args[0], ["push", ".", "HEAD:main"]);
   });
 
   it("should work with slash", async () => {
     await execFury(["fetch", "origin/b"]);
-    expect(executeGit.calls[0].args[0]).toEqual(["fetch", "origin/main"]);
+    assertEquals(executeGit.calls[0].args[0], ["fetch", "origin/main"]);
 
     await execFury(["fetch", "origin/main"]);
-    expect(executeGit.calls[1].args[0]).toEqual(["fetch", "origin/main"]);
+    assertEquals(executeGit.calls[1].args[0], ["fetch", "origin/main"]);
   });
 
   it("should work with '...' ", async () => {
     await execFury(["diff", "b...a"]);
-    expect(executeGit.calls[0].args[0]).toEqual([
+    assertEquals(executeGit.calls[0].args[0], [
       "diff",
       "main...another-topic-branch",
     ]);
@@ -127,7 +128,7 @@ describe("execShorthandGitCommand", () => {
 
   it("should work with '..' ", async () => {
     await execFury(["diff", "b..a"]);
-    expect(executeGit.calls[0].args[0]).toEqual([
+    assertEquals(executeGit.calls[0].args[0], [
       "diff",
       "main..another-topic-branch",
     ]);
@@ -135,7 +136,7 @@ describe("execShorthandGitCommand", () => {
 
   it("should not work with '.' ", async () => {
     await execFury(["diff", "b.a"]);
-    expect(executeGit.calls[0].args[0]).toEqual([
+    assertEquals(executeGit.calls[0].args[0], [
       "diff",
       "b.a",
     ]);
@@ -143,7 +144,7 @@ describe("execShorthandGitCommand", () => {
 
   it("should work with combinations of special chars", async () => {
     await execFury(["push", ".", "origin/b~1:b"]);
-    expect(executeGit.calls[0].args[0]).toEqual([
+    assertEquals(executeGit.calls[0].args[0], [
       "push",
       ".",
       "origin/main~1:main",
@@ -153,11 +154,9 @@ describe("execShorthandGitCommand", () => {
   it("should not indefinitely run", async () => {
     availableBranches = ["b", "a"];
     await execFury(["checkout", "a"]);
-    expect(executeGit.calls[0].args[0]).toEqual(["checkout", "b"]);
+    assertEquals(executeGit.calls[0].args[0], ["checkout", "b"]);
 
     await execFury(["checkout", "a/b~1"]);
-    expect(executeGit.calls[1].args[0]).toEqual(["checkout", "b/a~1"]);
+    assertEquals(executeGit.calls[1].args[0], ["checkout", "b/a~1"]);
   });
 });
-
-run();

@@ -1,11 +1,12 @@
 import fury from "../src/fury.ts";
-import { mock, tincan } from "../dev_deps.ts";
+import { asserts, bdd, mock } from "../dev_deps.ts";
 import BranchRepository from "./repositories/BranchRepository.ts";
 import testSetup from "./testSetup.ts";
 import { ServiceContainer } from "./fury.d.ts";
 import { colors } from "../deps.ts";
 
-const { beforeEach, describe, expect, it, run } = tincan;
+const { beforeEach, describe, it } = bdd;
+const { assertEquals } = asserts;
 
 describe("execShorthandGitCommand", () => {
   let log: mock.Spy<void>;
@@ -41,19 +42,22 @@ describe("execShorthandGitCommand", () => {
 
     await execFury(["branch"]);
 
-    expect(log.calls[0].args[0]).toEqual(
+    assertEquals(
+      log.calls[0].args[0],
       colors.reset("  ") + colors.yellow(`(a)`) +
         colors.reset(` another-topic-branch`) +
         colors.reset(colors.dim(` My description`)),
     );
 
-    expect(log.calls[1].args[0]).toEqual(
+    assertEquals(
+      log.calls[1].args[0],
       colors.reset("* ") + colors.yellow(`(b)`) +
         colors.green(` main`) +
         colors.reset(colors.dim(` `)),
     );
 
-    expect(log.calls[2].args[0]).toEqual(
+    assertEquals(
+      log.calls[2].args[0],
       colors.reset("  ") + colors.yellow(`(c)`) +
         colors.reset(` my-topic-branch`) +
         colors.reset(colors.dim(` `)),
@@ -108,30 +112,32 @@ describe("execShorthandGitCommand", () => {
 
     await execFury(["branch"]);
 
-    expect(log.calls[25].args[0]).toEqual(
+    assertEquals(
+      log.calls[25].args[0],
       colors.reset("  ") + colors.yellow(`(z)`) +
         colors.reset(` branch26`) +
         colors.reset(colors.dim(` `)),
     );
 
-    expect(log.calls[26].args[0]).toEqual(
+    assertEquals(
+      log.calls[26].args[0],
       colors.reset("* ") + colors.yellow(`(aa)`) +
         colors.green(` branch27`) +
         colors.reset(colors.dim(` `)),
     );
 
-    expect(log.calls[27].args[0]).toEqual(
+    assertEquals(
+      log.calls[27].args[0],
       colors.reset("  ") + colors.yellow(`(ab)`) +
         colors.reset(` branch28`) +
         colors.reset(colors.dim(` My description`)),
     );
 
-    expect(log.calls[28].args[0]).toEqual(
+    assertEquals(
+      log.calls[28].args[0],
       colors.reset("  ") + colors.yellow(`(ac)`) +
         colors.reset(` branch29`) +
         colors.reset(colors.dim(` `)),
     );
   });
 });
-
-run();
