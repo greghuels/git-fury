@@ -7,10 +7,10 @@ import { ServiceContainer } from "./fury.d.ts";
 
 const { beforeEach, describe, it } = bdd;
 const { assertEquals } = asserts;
-const { stub } = mock;
+const { assertSpyCall, spy } = mock;
 
 describe("execBranchDescription", () => {
-  let executeGit: mock.Stub<GitService>;
+  let executeGitSpy: mock.Spy<GitService>;
   let services: ServiceContainer;
   let availableBranches: Array<string>;
 
@@ -21,7 +21,7 @@ describe("execBranchDescription", () => {
       "my-topic-branch",
     ];
     services = testSetup({ dryRun: false });
-    executeGit = stub(services.gitService, "executeGit");
+    executeGitSpy = spy(services.gitService, "executeGit");
   });
 
   const execFury = (args: Array<string>) => {
@@ -36,25 +36,29 @@ describe("execBranchDescription", () => {
   describe("setting a branch description", () => {
     it("works for current branch", async () => {
       await execFury(["desc", "my description"]);
-      assertEquals(executeGit.calls[0].args[0], [
-        "config",
-        "branch.main.description",
-        "my description",
-      ]);
+      assertSpyCall(executeGitSpy, 0, {
+        args: [[
+          "config",
+          "branch.main.description",
+          "my description",
+        ]],
+      });
     });
 
     it("works for specified shorthand branch", async () => {
       await execFury(["desc", "c", "my description"]);
-      assertEquals(executeGit.calls[0].args[0], [
-        "config",
-        "branch.my-topic-branch.description",
-        "my description",
-      ]);
+      assertSpyCall(executeGitSpy, 0, {
+        args: [[
+          "config",
+          "branch.my-topic-branch.description",
+          "my description",
+        ]],
+      });
     });
 
     it("does not transform branch description", async () => {
       await execFury(["desc", "c", "a"]);
-      assertEquals(executeGit.calls[0].args[0], [
+      assertEquals(executeGitSpy.calls[0].args[0], [
         "config",
         "branch.my-topic-branch.description",
         "a",
@@ -65,7 +69,7 @@ describe("execBranchDescription", () => {
   describe("deleting a branch description", () => {
     it("works for current branch", async () => {
       await execFury(["desc", "-D"]);
-      assertEquals(executeGit.calls[0].args[0], [
+      assertEquals(executeGitSpy.calls[0].args[0], [
         "config",
         "--unset",
         "branch.main.description",
@@ -74,7 +78,7 @@ describe("execBranchDescription", () => {
 
     it("works for specified shorthand branch", async () => {
       await execFury(["desc", "c", "-D"]);
-      assertEquals(executeGit.calls[0].args[0], [
+      assertEquals(executeGitSpy.calls[0].args[0], [
         "config",
         "--unset",
         "branch.my-topic-branch.description",
@@ -83,7 +87,7 @@ describe("execBranchDescription", () => {
 
     it("works for specified longform branch", async () => {
       await execFury(["desc", "another-topic-branch", "-D"]);
-      assertEquals(executeGit.calls[0].args[0], [
+      assertEquals(executeGitSpy.calls[0].args[0], [
         "config",
         "--unset",
         "branch.another-topic-branch.description",
@@ -92,7 +96,7 @@ describe("execBranchDescription", () => {
 
     it("works when -D is the second argument", async () => {
       await execFury(["desc", "-D", "c"]);
-      assertEquals(executeGit.calls[0].args[0], [
+      assertEquals(executeGitSpy.calls[0].args[0], [
         "config",
         "--unset",
         "branch.my-topic-branch.description",
@@ -103,7 +107,7 @@ describe("execBranchDescription", () => {
   describe("showing a branch description with -S", () => {
     it("works for current branch with -S", async () => {
       await execFury(["desc", "-S"]);
-      assertEquals(executeGit.calls[0].args[0], [
+      assertEquals(executeGitSpy.calls[0].args[0], [
         "config",
         "branch.main.description",
       ]);
@@ -111,7 +115,7 @@ describe("execBranchDescription", () => {
 
     it("works for specified shorthand branch", async () => {
       await execFury(["desc", "c", "-S"]);
-      assertEquals(executeGit.calls[0].args[0], [
+      assertEquals(executeGitSpy.calls[0].args[0], [
         "config",
         "branch.my-topic-branch.description",
       ]);
@@ -119,7 +123,7 @@ describe("execBranchDescription", () => {
 
     it("works for specified longform branch", async () => {
       await execFury(["desc", "another-topic-branch", "-S"]);
-      assertEquals(executeGit.calls[0].args[0], [
+      assertEquals(executeGitSpy.calls[0].args[0], [
         "config",
         "branch.another-topic-branch.description",
       ]);
@@ -127,7 +131,7 @@ describe("execBranchDescription", () => {
 
     it("works when -S is the second argument", async () => {
       await execFury(["desc", "-S", "c"]);
-      assertEquals(executeGit.calls[0].args[0], [
+      assertEquals(executeGitSpy.calls[0].args[0], [
         "config",
         "branch.my-topic-branch.description",
       ]);
@@ -137,7 +141,7 @@ describe("execBranchDescription", () => {
   describe("showing a branch description with -s", () => {
     it("works for current branch with -s", async () => {
       await execFury(["desc", "-s"]);
-      assertEquals(executeGit.calls[0].args[0], [
+      assertEquals(executeGitSpy.calls[0].args[0], [
         "config",
         "branch.main.description",
       ]);
@@ -145,7 +149,7 @@ describe("execBranchDescription", () => {
 
     it("works for specified shorthand branch", async () => {
       await execFury(["desc", "c", "-s"]);
-      assertEquals(executeGit.calls[0].args[0], [
+      assertEquals(executeGitSpy.calls[0].args[0], [
         "config",
         "branch.my-topic-branch.description",
       ]);
@@ -153,7 +157,7 @@ describe("execBranchDescription", () => {
 
     it("works for specified longform branch", async () => {
       await execFury(["desc", "another-topic-branch", "-s"]);
-      assertEquals(executeGit.calls[0].args[0], [
+      assertEquals(executeGitSpy.calls[0].args[0], [
         "config",
         "branch.another-topic-branch.description",
       ]);
@@ -161,7 +165,7 @@ describe("execBranchDescription", () => {
 
     it("works when -s is the second argument", async () => {
       await execFury(["desc", "-s", "c"]);
-      assertEquals(executeGit.calls[0].args[0], [
+      assertEquals(executeGitSpy.calls[0].args[0], [
         "config",
         "branch.my-topic-branch.description",
       ]);
