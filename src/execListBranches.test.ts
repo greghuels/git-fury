@@ -1,12 +1,13 @@
 import fury from "../src/fury.ts";
 import { asserts, bdd, mock } from "../dev_deps.ts";
-import BranchRepository from "./repositories/BranchRepository.ts";
 import testSetup from "./testSetup.ts";
-import { ServiceContainer } from "./fury.d.ts";
+import { ServiceContainer } from "./types.ts";
 import { colors } from "../deps.ts";
+import { _internals } from "./helpers/branchHelpers.ts";
 
 const { beforeEach, describe, it } = bdd;
 const { assertEquals } = asserts;
+const { stub, resolvesNext } = mock;
 
 describe("execShorthandGitCommand", () => {
   let log: mock.Spy<void>;
@@ -27,20 +28,30 @@ describe("execShorthandGitCommand", () => {
       "main",
       "my-topic-branch",
     ];
-    BranchRepository.getAvailableBranches = () =>
-      Promise.resolve(availableBranches);
 
-    BranchRepository.getCurrentBranch = () => Promise.resolve("main");
+    const getAvailableBranchesStub = stub(
+      _internals,
+      "getAvailableBranches",
+      resolvesNext([availableBranches]),
+    );
+    const getCurrentBranchStub = stub(
+      _internals,
+      "getCurrentBranch",
+      resolvesNext(["main"]),
+    );
+    const getBranchDescriptionStub = stub(
+      _internals,
+      "getBranchDescription",
+      resolvesNext(["My description", "", ""]),
+    );
 
-    BranchRepository.getBranchDescription = (branch: string) => {
-      if (branch === "another-topic-branch") {
-        return Promise.resolve("My description");
-      } else {
-        return Promise.resolve("");
-      }
-    };
-
-    await execFury(["branch"]);
+    try {
+      await execFury(["branch"]);
+    } finally {
+      getAvailableBranchesStub.restore();
+      getCurrentBranchStub.restore();
+      getBranchDescriptionStub.restore();
+    }
 
     assertEquals(
       log.calls[0].args[0],
@@ -97,20 +108,35 @@ describe("execShorthandGitCommand", () => {
       "branch29",
     ];
 
-    BranchRepository.getAvailableBranches = () =>
-      Promise.resolve(availableBranches);
+    const currentBranch = "branch27";
 
-    BranchRepository.getCurrentBranch = () => Promise.resolve("branch27");
+    const branchDescriptions = new Array(availableBranches.length).fill("");
+    branchDescriptions[branchDescriptions.length - 2] =
+      "My Description for Branch 28";
 
-    BranchRepository.getBranchDescription = (branch: string) => {
-      if (branch === "branch28") {
-        return Promise.resolve("My description");
-      } else {
-        return Promise.resolve("");
-      }
-    };
+    const getAvailableBranchesStub = stub(
+      _internals,
+      "getAvailableBranches",
+      resolvesNext([availableBranches]),
+    );
+    const getCurrentBranchStub = stub(
+      _internals,
+      "getCurrentBranch",
+      resolvesNext([currentBranch]),
+    );
+    const getBranchDescriptionStub = stub(
+      _internals,
+      "getBranchDescription",
+      resolvesNext(branchDescriptions),
+    );
 
-    await execFury(["branch"]);
+    try {
+      await execFury(["branch"]);
+    } finally {
+      getAvailableBranchesStub.restore();
+      getCurrentBranchStub.restore();
+      getBranchDescriptionStub.restore();
+    }
 
     assertEquals(
       log.calls[25].args[0],
@@ -130,7 +156,7 @@ describe("execShorthandGitCommand", () => {
       log.calls[27].args[0],
       colors.reset("  ") + colors.yellow(`(ab)`) +
         colors.reset(` branch28`) +
-        colors.reset(colors.dim(` My description`)),
+        colors.reset(colors.dim(` My Description for Branch 28`)),
     );
 
     assertEquals(

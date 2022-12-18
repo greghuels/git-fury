@@ -8,9 +8,8 @@ import execListBranches, {
 } from "./execListBranches.ts";
 import execShorthandGitCommand from "./execShorthandGitCommand.ts";
 import execVersion, { shouldExecVersion } from "./execVersion.ts";
-import { ServiceContainer } from "./fury.d.ts";
-import { FuryOptions } from "./fury.d.ts";
-import BranchDescriptionService from "./services/BranchDescriptionService.ts";
+import { ServiceContainer } from "./types.ts";
+import { FuryOptions } from "./types.ts";
 import { BranchService } from "./services/BranchService.ts";
 import { GitService } from "./services/GitService.ts";
 
@@ -36,14 +35,8 @@ const stripDryRunArgument = (originalArgs: Array<string>): Array<string> => {
 const getDefaultServices = (options: FuryOptions): ServiceContainer => {
   const log = console.log;
   const gitService = new GitService(options, log);
-  const branchService = new BranchService(log);
-  const branchDescriptionService = new BranchDescriptionService(
-    options,
-    gitService,
-    branchService,
-  );
-
-  return { log, gitService, branchService, branchDescriptionService };
+  const branchService = new BranchService(options, log, gitService);
+  return { log, gitService, branchService };
 };
 
 export default async function fury(

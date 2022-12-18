@@ -1,13 +1,13 @@
 import fury from "../src/fury.ts";
 import { GitService } from "../src/services/GitService.ts";
 import { asserts, bdd, mock } from "../dev_deps.ts";
-import BranchRepository from "./repositories/BranchRepository.ts";
 import testSetup from "./testSetup.ts";
-import { ServiceContainer } from "./fury.d.ts";
+import { ServiceContainer } from "./types.ts";
+import { _internals } from "./helpers/branchHelpers.ts";
 
 const { beforeEach, describe, it } = bdd;
 const { assertEquals } = asserts;
-const { stub } = mock;
+const { stub, resolvesNext } = mock;
 
 describe("execShorthandGitCommand", () => {
   let executeGit: mock.Stub<GitService>;
@@ -24,11 +24,17 @@ describe("execShorthandGitCommand", () => {
     executeGit = stub(services.gitService, "executeGit");
   });
 
-  const execFury = (args: Array<string>) => {
-    BranchRepository.getAvailableBranches = () =>
-      Promise.resolve(availableBranches);
-
-    return fury(args, services);
+  const execFury = async (args: Array<string>) => {
+    const getAvailableBranchesStub = stub(
+      _internals,
+      "getAvailableBranches",
+      resolvesNext([availableBranches, availableBranches]),
+    );
+    try {
+      await fury(args, services);
+    } finally {
+      getAvailableBranchesStub.restore();
+    }
   };
 
   it("should expand letters to branch names", async () => {

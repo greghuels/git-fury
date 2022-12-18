@@ -1,4 +1,4 @@
-import { FuryOptions, ServiceContainer } from "./fury.d.ts";
+import { FuryOptions, ServiceContainer } from "./types.ts";
 
 export const shouldExecListBranches = (args: Array<string>): boolean => {
   if (args[0] === "branch") {

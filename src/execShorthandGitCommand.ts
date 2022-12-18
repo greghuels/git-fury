@@ -1,4 +1,4 @@
-import { FuryOptions, ServiceContainer } from "./fury.d.ts";
+import { FuryOptions, ServiceContainer } from "./types.ts";
 
 export default async function execShorthandGitCommand(
   args: Array<string>,
