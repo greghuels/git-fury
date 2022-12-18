@@ -1,5 +1,5 @@
-import { ServiceContainer } from "./fury.d.ts";
-import BranchRepository from "./repositories/BranchRepository.ts";
+import { ServiceContainer } from "./types.ts";
+import { _internals } from "./helpers/branchHelpers.ts";
 
 async function getBranchName(descArgs: Array<string>): Promise<string> {
   const filteredArgs = descArgs.filter((arg) =>
@@ -7,10 +7,10 @@ async function getBranchName(descArgs: Array<string>): Promise<string> {
   );
   const isDeleteOrShow = filteredArgs.length !== descArgs.length;
   if (isDeleteOrShow) {
-    return filteredArgs[0] ?? (await BranchRepository.getCurrentBranch());
+    return filteredArgs[0] ?? (await _internals.getCurrentBranch());
   } else {
     return filteredArgs.length < 2
-      ? (await BranchRepository.getCurrentBranch())
+      ? (await _internals.getCurrentBranch())
       : filteredArgs[0];
   }
 }
@@ -34,7 +34,7 @@ export default async function execBranchDescription(
   originalArgs: Array<string>,
   services: ServiceContainer,
 ): Promise<number> {
-  const { branchService, gitService, branchDescriptionService } = services;
+  const { branchService, gitService } = services;
   const charToBranchMap = await branchService.getCharToBranchMap();
   const expandedArgs = gitService.getExpandedArgs(
     originalArgs,
@@ -49,12 +49,12 @@ export default async function execBranchDescription(
     const branchName = (await getBranchName(descArgs)).trim();
     let code: number;
     if (descArgs.includes("-D")) {
-      code = await branchDescriptionService.removeBranchDescription(branchName);
+      code = await branchService.removeBranchDescription(branchName);
     } else if (descArgs.includes("-s") || descArgs.includes("-S")) {
-      code = await branchDescriptionService.showBranchDescription(branchName);
+      code = await branchService.showBranchDescription(branchName);
     } else {
       const descriptionString = originalArgs.slice(-1)[0];
-      code = await branchDescriptionService.setBranchDescription(
+      code = await branchService.setBranchDescription(
         branchName,
         descriptionString,
       );

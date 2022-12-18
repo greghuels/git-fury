@@ -1,13 +1,13 @@
 import fury from "../src/fury.ts";
 import { GitService } from "../src/services/GitService.ts";
 import { asserts, bdd, mock } from "../dev_deps.ts";
-import BranchRepository from "./repositories/BranchRepository.ts";
 import testSetup from "./testSetup.ts";
-import { ServiceContainer } from "./fury.d.ts";
+import { ServiceContainer } from "./types.ts";
+import { _internals } from "./helpers/branchHelpers.ts";
 
 const { beforeEach, describe, it } = bdd;
 const { assertEquals } = asserts;
-const { assertSpyCall, spy } = mock;
+const { assertSpyCall, spy, stub, resolvesNext } = mock;
 
 describe("execBranchDescription", () => {
   let executeGitSpy: mock.Spy<GitService>;
@@ -24,13 +24,23 @@ describe("execBranchDescription", () => {
     executeGitSpy = spy(services.gitService, "executeGit");
   });
 
-  const execFury = (args: Array<string>) => {
-    BranchRepository.getAvailableBranches = () =>
-      Promise.resolve(availableBranches);
-
-    BranchRepository.getCurrentBranch = () => Promise.resolve("main");
-
-    return fury(args, services);
+  const execFury = async (args: Array<string>) => {
+    const getAvailableBranchesStub = stub(
+      _internals,
+      "getAvailableBranches",
+      resolvesNext([availableBranches, availableBranches]),
+    );
+    const getCurrentBranchStub = stub(
+      _internals,
+      "getCurrentBranch",
+      resolvesNext(["main", "main"]),
+    );
+    try {
+      await fury(args, services);
+    } finally {
+      getAvailableBranchesStub.restore();
+      getCurrentBranchStub.restore();
+    }
   };
 
   describe("setting a branch description", () => {

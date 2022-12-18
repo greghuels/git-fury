@@ -1,4 +1,4 @@
-import { FuryOptions } from "../fury.d.ts";
+import { FuryOptions } from "../types.ts";
 import { colors } from "../../deps.ts";
 import Subprocess from "../helpers/Subprocess.ts";
 import getExpandedArgs from "../helpers/getExpandedArgs.ts";
