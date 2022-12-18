@@ -1,0 +1,11 @@
+{
+  "version": "3",
+  "redirects": {
+    "https://deno.land/std/fmt/printf.ts": "https://deno.land/std@0.223.0/fmt/printf.ts",
+    "https://deno.land/std/path/mod.ts": "https://deno.land/std@0.223.0/path/mod.ts",
+    "https://deno.land/std/testing/asserts.ts": "https://deno.land/std@0.223.0/testing/asserts.ts",
+    "https://deno.land/x/yargs/deno-types.ts": "https://deno.land/x/yargs@v17.7.2-deno/deno-types.ts",
+    "https://deno.land/x/yargs/deno.ts": "https://deno.land/x/yargs@v17.7.2-deno/deno.ts"
+  },
+  "remote": {}
+}
