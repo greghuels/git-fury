@@ -24,25 +24,18 @@ export default class BranchRepository {
 
   static getCurrentBranch = async (): Promise<string> => {
     try {
-      /**
-       * `git rev-parse --format=%(refname:short)` doesn't work when a tag exists with the same branch name.
-       * `git symbolic-ref --short HEAD` doesn't work when a tag exists with the same branch name.
-       * `git branch --show-current` only works for newer git versions and does not work when in a submodule.
-       *  therefore,
-       *  `git branch` and filtering results seems to be the only reliable way to get current branch spanning many git versions
-       */
       const { code, output, error } = await Subprocess.exec(
         "git",
-        "branch",
+        "rev-parse",
+        "--symbolic-full-name",
+        "HEAD",
       );
       if (!code) {
-        const currentBranchOutputLine = output.split("\n").filter((line) =>
-          line.startsWith("*")
+        const prefix = "refs/heads/";
+        const branchRef = output.split("\n").find((ref) =>
+          ref.startsWith(prefix)
         );
-        const currentBranch = currentBranchOutputLine.length
-          ? currentBranchOutputLine[0].slice(1).trim()
-          : "";
-        return currentBranch === "HEAD" ? "" : currentBranch;
+        return branchRef?.slice(prefix.length).trim() ?? "";
       } else {
         console.error(error);
         Deno.exit(code);
