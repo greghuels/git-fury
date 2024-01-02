@@ -9,7 +9,13 @@ export default async function execShorthandGitCommand(
   const charToBranchMap = await branchService.getCharToBranchMap();
   const expandedArgs = gitService.getExpandedArgs(args, charToBranchMap);
   const code = await gitService.executeGit(expandedArgs);
-  if (!options.dryRun) {
+  const gitCommand = expandedArgs[0] ?? "";
+  const commandsToListBranches = [
+    "branch",
+    "checkout",
+    "switch",
+  ];
+  if (!options.dryRun && commandsToListBranches.includes(gitCommand)) {
     await branchService.listBranches();
   }
   return code;

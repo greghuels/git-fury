@@ -4,6 +4,7 @@ import { asserts, bdd, mock } from "../dev_deps.ts";
 import testSetup from "./testSetup.ts";
 import { ServiceContainer } from "./types.ts";
 import { _internals } from "./helpers/branchHelpers.ts";
+import { BranchService } from "./services/BranchService.ts";
 
 const { beforeEach, describe, it } = bdd;
 const { assertEquals } = asserts;
@@ -11,6 +12,7 @@ const { stub, resolvesNext } = mock;
 
 describe("execShorthandGitCommand", () => {
   let executeGit: mock.Stub<GitService>;
+  let listBranches: mock.Stub<BranchService>;
   let services: ServiceContainer;
   let availableBranches: Array<string>;
 
@@ -22,6 +24,7 @@ describe("execShorthandGitCommand", () => {
     ];
     services = testSetup({ dryRun: false });
     executeGit = stub(services.gitService, "executeGit");
+    listBranches = stub(services.branchService, "listBranches");
   });
 
   const execFury = async (args: Array<string>) => {
@@ -164,5 +167,15 @@ describe("execShorthandGitCommand", () => {
 
     await execFury(["checkout", "a/b~1"]);
     assertEquals(executeGit.calls[1].args[0], ["checkout", "b/a~1"]);
+  });
+
+  it("should list branches for supported commands", async () => {
+    await execFury(["checkout", "b"]);
+    assertEquals(listBranches.calls.length, 1);
+  });
+
+  it("should not list branches for unsupported commands", async () => {
+    await execFury(["diff", "b.a"]);
+    assertEquals(listBranches.calls.length, 0);
   });
 });
