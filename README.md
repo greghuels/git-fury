@@ -10,17 +10,29 @@ fu and increase productivity.
 ## Table of Contents
 
 - [Installation](#installation)
+- [Configuration](#configuration)
 - [Demo](#demo)
 - [Usage](#usage)
 - [Tips](#tips)
 
 ## Installation
 
+Any of the following methods can be used to install git-fury.
+
 #### Homebrew
 
 ```sh
 brew install greghuels/tap/git-fury
 ```
+
+#### Manual Download
+
+1. Download the latest binary for your computer's architecture
+   ([latest release](https://github.com/greghuels/git-fury/releases/latest))
+1. Grant executable permissions. Example:
+   `chmod +x ~/Downloads/git-fury-aarch64-unknown-linux-gnu`
+1. Rename to "git-fury" and make available to PATH. Example:
+   `mv ~/Downloads/git-fury-aarch64-unknown-linux-gnu /usr/local/bin/git-fury`
 
 #### Building from Source
 
@@ -30,6 +42,8 @@ brew install greghuels/tap/git-fury
 1. Build source: `deno compile --allow-run ./mod.ts` (using
    [deno](https://deno.land/))
 1. Move binary: `mv ./git-fury /usr/local/bin`
+
+## Configuration
 
 #### Setting Aliases (recommended)
 
@@ -141,7 +155,3 @@ want to use. For branch descriptions, set the following aliases:
 git config --global alias.br 'fury branch'
 git config --global alias.ds 'fury desc'
 ```
-
-You can still be productive on the CLI by leveraging tools like
-[fzf](https://github.com/junegunn/fzf) for quickly switching branches. As of git
-1.8.5, you can use `@` as shorthand for `HEAD`.

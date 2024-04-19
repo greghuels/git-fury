@@ -14,14 +14,11 @@ fi
 rm -rf "target/$version"
 mkdir "target/$version"
 
-export targets=( "aarch64-apple-darwin" "x86_64-apple-darwin" "x86_64-unknown-linux-gnu" )
+export targets=("x86_64-unknown-linux-gnu" "aarch64-unknown-linux-gnu" "x86_64-pc-windows-msvc" "x86_64-apple-darwin" "aarch64-apple-darwin" )
 
 for target in "${targets[@]}"
 do
    :
    filename="./target/${version}/git-fury-${target}"
    deno compile --allow-run --target=${target} --output=${filename} ./mod.ts
-   tar -czf ${filename}.tar.gz ${filename}
-   rm -f ${filename}
-   shasum -a 256 ${filename}.tar.gz
 done
