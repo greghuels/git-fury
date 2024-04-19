@@ -1,0 +1,9 @@
+{
+  "lint": {
+    "include": ["mod.ts", "src/"],
+    "rules": {
+      "tags": ["recommended"],
+      "exclude": ["no-deprecated-deno-api"]
+    }
+  }
+}
