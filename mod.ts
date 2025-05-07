@@ -7,7 +7,7 @@ async function main() {
     Deno.exit(code);
   } catch (e) {
     console.error(e);
-    Deno.exit(e?.status ?? 1);
+    Deno.exit(1);
   }
 }
 
