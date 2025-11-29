@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build binaries
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-gnu
+          - aarch64-unknown-linux-gnu
+          - x86_64-pc-windows-msvc
+          - x86_64-apple-darwin
+          - aarch64-apple-darwin
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Build binary
+        run: |
+          TARGET="${{ matrix.target }}"
+          OUTPUT="git-fury-${TARGET}"
+          if [[ "${TARGET}" == *"windows"* ]]; then
+            OUTPUT="${OUTPUT}.exe"
+          fi
+          deno compile --allow-run --target="${TARGET}" --output="${OUTPUT}" ./mod.ts
+
+      - name: Upload binary to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: git-fury-*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
