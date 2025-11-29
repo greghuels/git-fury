@@ -3,26 +3,30 @@ const decode = (std: Uint8Array | undefined) =>
 
 export default class Subprocess {
   static exec = async (...cmd: Array<string>) => {
-    const p = Deno.run({ cmd, stderr: "piped", stdout: "piped" });
-    const [status, stdout, stderr] = await Promise.all([
-      p.status(),
-      p.output(),
-      p.stderrOutput(),
-    ]);
-    p.close();
+    const command = new Deno.Command(cmd[0], {
+      args: cmd.slice(1),
+      stderr: "piped",
+      stdout: "piped",
+    });
+    const { code, stdout, stderr } = await command.output();
     return {
-      code: status.code,
+      code,
       output: decode(stdout),
       error: decode(stderr),
     };
   };
 
   static spawn = async (...cmd: Array<string>) => {
-    const p = Deno.run({ cmd });
-    const status = await p.status();
-    if (status.code !== 0) {
-      Deno.exit(status.code);
+    const command = new Deno.Command(cmd[0], {
+      args: cmd.slice(1),
+      stdin: "inherit",
+      stdout: "inherit",
+      stderr: "inherit",
+    });
+    const { code } = await command.output();
+    if (code !== 0) {
+      Deno.exit(code);
     }
-    return status.code;
+    return code;
   };
 }

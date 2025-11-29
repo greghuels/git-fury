@@ -7,7 +7,8 @@ async function main() {
     Deno.exit(code);
   } catch (e) {
     console.error(e);
-    Deno.exit(e?.status ?? 1);
+    const exitCode = (e && typeof e === 'object' && 'code' in e) ? (e as { code: number }).code : 1;
+    Deno.exit(exitCode);
   }
 }
 
